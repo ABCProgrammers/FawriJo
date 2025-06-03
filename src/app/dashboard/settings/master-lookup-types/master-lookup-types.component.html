@@ -1,0 +1,54 @@
+<div class="row mb-3">
+  <div class="col-5">
+    <form [formGroup]="filterForm">
+      <div class="row">
+        <div class="col-7">
+          <div class="myinput-group">
+            <span class="left"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search by Name" formControlName="name" />
+            <span *ngIf="filterForm.get('name').value" class="right"><i (click)="resetControlValue('name')" class="cursor-pointer fas fa-times"></i></span>
+          </div>
+        </div>
+        <div class="col-5">
+          <ng-select [items]="statusList"
+                     formControlName="status"
+                     class="ng-select-filter"
+                     placeholder="Status"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID">
+          </ng-select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-7 d-flex justify-content-end">
+    <button (click)="handleAddClick()" type="button" class="btn btn-primary fw-300">
+      <i class="fas fa-plus"></i> Add Master Lookup Type
+    </button>
+  </div>
+</div>
+<appDataTable [config]="tableConfig"
+              [columns]="tableColumns"
+              [data]="lookupList"
+              [otherData]="otherData"
+              [page]="pageNo"
+              [total]="total"
+              [limit]="limit"
+              (sortUpdated)="onSortChange($event)"
+              (pageUpdated)="onPageChange($event)">
+  <ng-template tableDataColumn="status" let-row="row">
+    <div class="status-tag"
+         [style.background-color]="row?.status?.lookupBGColor"
+         [style.color]="row?.status?.lookupTextColor">
+      {{row?.status?.lookupNameEN}}
+    </div>
+  </ng-template>
+  <ng-template tableDataColumn="action" let-row="row">
+    <div class="d-flex gap-1">
+      <div (click)="handleAddClick(row)" [class.disable-elm]="row?.status?.lookupID == statusEnum.Deleted"
+           class="table-actions edit"><img src="/assets/images/edit.svg" /></div>
+      <div (click)="confirmDelete(row)" [class.disable-elm]="row?.status?.lookupID == statusEnum.Deleted"
+           class="table-actions delete"><img src="/assets/images/trash.svg" /></div>
+    </div>
+  </ng-template>
+</appDataTable>

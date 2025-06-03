@@ -1,0 +1,77 @@
+@import '../../../assets/scss/_variables.scss';
+@import '../../../media-queries.scss';
+
+.side-menu-wrapper {
+  width: 275px;
+  background: $black-300;
+  height: 100vh;
+  border-right: 1px solid $border-color;
+  position: fixed;
+  z-index: 2;
+  overflow: hidden;
+
+  .logo {
+    border-bottom: 1px solid $border-color;
+    padding: 12px 10px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+  }
+
+  ul {
+    padding: 12px 5px;
+    display: flex;
+    flex-direction: column;
+
+    li {
+      margin-bottom: 5px;
+
+      a {
+        padding: 8px;
+        font-weight: 500;
+        font-size: 15px;
+        color: $text-color;
+        text-decoration: none;
+        line-height: 1;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 8px;
+
+        &:hover {
+          color: $charcoal-black;
+          background: #e7e7e7;
+        }
+
+        &.active {
+          color: $charcoal-black;
+          font-weight: 500;
+          background: #e7e7e7;
+        }
+      }
+    }
+  }
+
+  .nested-menu {
+    padding: 0;
+    padding-left: 10px;
+    padding-top: 10px;
+
+    li {
+      a {
+        margin-bottom: 2px;
+        padding: 7px;
+        color: $text-color;
+        font-size: 13px;
+        /*&:hover {
+          color: $charcoal-black;
+        }
+
+        &.active {
+          color: $charcoal-black;
+        }*/
+      }
+    }
+  }
+}

@@ -1,0 +1,145 @@
+<form [formGroup]="filterForm">
+  <div class="row mb-3">
+    <div class="col-3">
+      <div class="myinput-group">
+        <span class="left"><i class="fas fa-search"></i></span>
+        <input type="text" class="form-control" placeholder="Search by receiver name" formControlName="search" />
+        <span *ngIf="filterForm.get('search').value" class="right"><i (click)="resetControlValue('search')" class="cursor-pointer fas fa-times"></i></span>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="row">
+        <div class="col-6">
+          <ng-select [items]="statusList"
+                     formControlName="status"
+                     placeholder="Status"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID"
+                     class="ng-select-filter">
+          </ng-select>
+
+        </div>
+        <div class="col-6">
+          <ng-select [items]="countryList"
+                     formControlName="country"
+                     placeholder="Country"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID"
+                     class="ng-select-filter">
+          </ng-select>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-6 justify-content-end gap-2 d-flex">
+      <button type="button" (click)="toggleFilters()" class="btn btn-outline-dark white-bg">
+        <i class="fa-solid fa-sliders"></i> Filter
+      </button>
+      <button type="button" class="btn btn-outline-dark white-bg fw-400">
+        <i class="fa-solid fa-download"></i> Export Customers Report
+      </button>
+    </div>
+  </div>
+  <app-card class="mb-4" *ngIf="showFilter">
+    <div class="row">
+      <div class="col-4 mb-3">
+        <label class="input-label">From Customer ID #</label>
+        <div class="myinput-group">
+          <span class="left"><i class="fas fa-search"></i></span>
+          <input type="text" class="form-control" placeholder="From Customer ID" formControlName="search" />
+          <span *ngIf="filterForm.get('search').value" class="right"><i (click)="resetControlValue('search')" class="cursor-pointer fas fa-times"></i></span>
+        </div>
+      </div>
+      <div class="col-4 mb-3">
+        <label class="input-label">From City</label>
+        <ng-select [items]="cityList"
+                   formControlName="city"
+                   placeholder="From City"
+                   bindLabel="lookupNameEN"
+                   bindValue="lookupID"
+                   class="ng-select-filter">
+        </ng-select>
+      </div>
+      <div class="col-4 mb-3">
+        <label class="input-label">To City</label>
+        <ng-select [items]="cityList"
+                   formControlName="city"
+                   placeholder="To City"
+                   bindLabel="lookupNameEN"
+                   bindValue="lookupID"
+                   class="ng-select-filter">
+        </ng-select>
+      </div>
+      <div class="col-4 mb-3">
+        <label class="input-label">Order Items Category</label>
+        <ng-select [items]="categoryList"
+                   formControlName="city"
+                   placeholder="Order Items Category"
+                   bindLabel="lookupNameEN"
+                   bindValue="lookupID"
+                   class="ng-select-filter">
+        </ng-select>
+      </div>
+      <div class="col-4 mb-3">
+        <label class="input-label">Created (From - To)</label>
+        <div class="myinput-group">
+          <input type="text"
+                 bsDaterangepicker
+                 placement="bottom"
+                 class="form-control"
+                 placeholder="Created (From - To)"
+                 formControlName="creationDate" />
+          <span *ngIf="filterForm.get('creationDate').value" class="right">
+            <i (click)="resetControlValue('creationDate')" class="cursor-pointer fas fa-times"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-dark height-48 fw-400" (click)="toggleFilters()">Cancel</button>
+        <button type="button" class="btn btn-outline-light height-48 fw-400" (click)="resetFilterForm()">Reset All</button>
+      </div>
+    </div>
+  </app-card>
+</form>
+<appDataTable [config]="tableConfig"
+              [columns]="tableColumns"
+              [data]="dataList"
+              [otherData]="otherData"
+              [page]="pageNo"
+              [total]="total"
+              [limit]="limit"
+              (sortUpdated)="onSortChange($event)"
+              (multiSelected)="handleMultiSelect($event)"
+              (pageUpdated)="onPageChange($event)">
+  <!--Data-->
+  <ng-template tableDataColumn="customerName" let-row="row">
+    <div class="d-flex align-items-center gap-2">
+      <app-shape-card [imageUrl]="row?.customerProfileImage || '/assets/images/user-image.png'"
+                      [customClass]="''"
+                      [customStyles]="{borderRadius:'50%',height:'40px', width:'40px'}">
+      </app-shape-card>
+      {{row?.fullName}}
+    </div>
+  </ng-template>
+  <ng-template tableDataColumn="status" let-row="row">
+    <div class="status-tag"
+         [style.background-color]="row?.status?.lookupBGColor"
+         [style.color]="row?.status?.lookupTextColor">
+      {{row?.status?.lookupNameEN?.lookupName}}
+    </div>
+  </ng-template>
+  <ng-template tableDataColumn="action" let-row="row">
+    <div class="d-flex gap-1">
+      <div class="table-actions wallet" (click)="handleOrderDetailsClick(row,'details')"><i class="primary-clr fas fa-eye"></i> </div>
+      <div class="table-actions view" (click)="handleOrderTrackingClick(row)"><img src="/assets/images/tracking.svg" /> </div>
+      <div (click)="handleOrderDetailsClick(row,'edit')" class="table-actions edit" >
+        <img src="/assets/images/edit.svg" />
+      </div>
+      <div (click)="confirmDelete(row)" class="table-actions delete">
+        <img src="/assets/images/trash.svg" />
+      </div>
+    </div>
+  </ng-template>
+</appDataTable>

@@ -1,0 +1,78 @@
+<div class="table-wrapper-grid" style="--grid-template:1.4fr 1fr 1fr 1fr .4fr .45fr">
+  <div class="table-header">
+    <div class="header-cell">Country</div>
+    <div class="header-cell">Channel</div>
+    <div class="header-cell">Link</div>
+    <div class="header-cell">Social ID</div>
+    <div class="header-cell">Status</div>
+    <div class="header-cell">Action</div>
+  </div>
+  <form [formGroup]="f">
+    <div class="table-body">
+      <ng-container formArrayName="socialMedia">
+        <div class="table-row" *ngFor="let row of formArray.controls; let rowIndex=index" [formGroupName]="rowIndex">
+          <div class="body-cell">
+            <ng-select [items]="countryList"
+                       formControlName="socialMediaCountry"
+                       placeholder="Select Country"
+                       bindLabel="lookupNameEN"
+                       bindValue="lookupID"
+                       class="input-dropdown">
+            </ng-select>
+            <validation-error [control]="row.get('socialMediaCountry')" [errorMessages]="{required:'Input is required'}"></validation-error>
+          </div>
+          <div class="body-cell">
+            <ng-select [items]="socialMethodList"
+                       formControlName="socialMediaMethod"
+                       placeholder="Select Channel"
+                       bindLabel="lookupNameEN"
+                       bindValue="lookupID"
+                       class="input-dropdown">
+            </ng-select>
+            <validation-error [control]="row.get('socialMediaMethod')" [errorMessages]="{required:'Input is required'}"></validation-error>
+          </div>
+          <div class="body-cell">
+            <input type="text" formControlName="socialMediaLink" class="form-control input-control" placeholder="Link" />
+            <validation-error [control]="row.get('socialMediaLink')" [errorMessages]="{required:'Input is required'}"></validation-error>
+          </div>
+          <div class="body-cell">
+            <input type="text" formControlName="socialMediaSMID" class="form-control input-control" placeholder="Social Id" />
+            <validation-error [control]="row.get('socialMediaSMID')" [errorMessages]="{required:'Input is required'}"></validation-error>
+          </div>
+          <div class="body-cell">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" formControlName="status" />
+            </div>
+          </div>
+          <div class="body-cell">
+            <div class="d-flex gap-1">
+              @if(row.value.edit){
+              <div ngbTooltip="Save" class="table-actions save" (click)="saveData(row)">
+                <img src="/assets/images/save.svg" />
+              </div>
+              }
+              @else if(!row.value.socialMediaID){
+              <div ngbTooltip="Save New" class="table-actions save" (click)="saveData(row)">
+                <img src="/assets/images/save.svg" />
+              </div>
+              }
+              @else{
+              <div ngbTooltip="Edit" class="table-actions edit" (click)="handleEditClick(row)">
+                <img src="/assets/images/edit.svg" />
+              </div>
+              }
+              <div ngbTooltip="Delete" class="table-actions delete" (click)="confirmDelete(row,rowIndex)">
+                <img src="/assets/images/trash.svg" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <div class="d-flex justify-content-center tfoot">
+        <button type="button" class="btn btn-primary w-100 fw-500" (click)="handleAddRowClick()">
+          <i class="me-2 fas fa-plus"></i> Add New
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

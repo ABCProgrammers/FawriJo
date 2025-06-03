@@ -1,0 +1,34 @@
+<div class="modal-header align-items-center justify-content-between">
+  <h6 ngbAutoFocus class="font-20 fw-500">{{data?.lookupName || 'Add New Lookup'}}</h6>
+  <i *ngIf="data?.isEdit" (click)="toggleEdit()" class="fas font-22 green-clr cursor-pointer" [ngClass]="f.disabled && 'fa-pencil' || 'fa-pen-to-square'"></i>
+</div>
+<div class="modal-body">
+  <form [formGroup]="formGroup">
+    <div class="row">
+      <div class="col-6">
+        <div class="mb-3">
+          <label class="input-label asterik">Name</label>
+          <input type="text" class="form-control input-control" formControlName="lookupName" placeholder="Name">
+          <ng-container *ngIf="f?.get('lookupName')?.errors">
+            <ng-container *ngIf="f?.get('lookupName')?.invalid && f?.get('lookupName')?.touched || f?.get('lookupName')?.dirty">
+              <span class="validation-error" *ngIf="f?.get('lookupName')?.errors['required']">Input is required</span>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="mb-3">
+          <label class="input-label">Description</label>
+          <input type="text" class="form-control input-control" formControlName="lookupDesc" placeholder="Description">
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer border-0">
+  <button class="btn btn-outline-dark" type="button" (click)="_activeModal.close()">Cancel</button>
+  <button class="btn btn-primary" type="button" [disabled]="formGroup.disabled" (click)="save()">
+    <i class="fas font-18 me-2" [ngClass]="!data?.isEdit && 'fa-circle-plus' || 'fa-save'"></i>
+    Add
+  </button>
+</div>

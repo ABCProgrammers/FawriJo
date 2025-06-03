@@ -1,0 +1,11 @@
+<ng-container *ngIf="data?.customHeader || data?.heading">
+  <div [ngStyle]="data?.headingStyle || {marginBottom:'5px' }">
+    <ng-container *ngIf="!data?.customHeader;else customHeader">
+      <h6 class="heading">{{data?.heading}}</h6>
+    </ng-container>
+    <ng-template #customHeader>
+      <ng-content select="[customHeader]"></ng-content>
+    </ng-template>
+  </div>
+</ng-container>
+<ng-content></ng-content>

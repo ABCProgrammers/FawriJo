@@ -1,0 +1,13 @@
+<div class="file-item" [class]="classesString" [ngStyle]="customStyles">
+  <div class="d-flex gap-3 align-items-center justify-content-between">
+    <label class="m-0">Attachment</label>
+    <div class="d-flex gap-2 align-items-center">
+      <img src="/assets/images/eye.svg" (click)="fileAction('view')" class="cursor-pointer pt-1" [ngClass]="disableElements?.disableView && 'disable-elm'" />
+      <a href="{{file}}" target="_blank" *ngIf="download" [ngClass]="disableElements?.disableDownload && 'disable-elm'">
+        <img src="/assets/images/download.svg" />
+      </a>
+      <img *ngIf="reset" [ngClass]="disableElements?.disableReset && 'disable-elm'" src="/assets/images/repeat.svg" (click)="fileAction('reset')" class="cursor-pointer pt-1" />
+      <img *ngIf="remove" [ngClass]="disableElements?.disableRemove && 'disable-elm'" height="22" src="/assets/images/delete.svg" (click)="fileAction('remove')" class="cursor-pointer pt-1" />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div [ngClass]="['shape-container', shapeClass, customClass || '']" (click)="onContainerClick($event)"
+     [ngStyle]="customStyles">
+  <!-- Image rendering -->
+  <ng-container *ngIf="imageUrl">
+    <img [src]="imageUrl"
+         alt="shape image"
+         [ngClass]="['shape-image', imageClass || '']"
+         [ngStyle]="imageStyles" />
+  </ng-container>
+
+  <!-- Text rendering -->
+  <ng-container *ngIf="text">
+    <p [ngClass]="['shape-text', textClass || '']"
+       [ngStyle]="textStyles">
+      {{ text }}
+    </p>
+  </ng-container>
+
+  <!-- Optional content projection -->
+  <ng-content></ng-content>
+</div>

@@ -1,0 +1,36 @@
+$breakpoints: ( "xs": 0, // Extra small (not officially in Bootstrap 5)
+"sm": 576px, // Small
+"md": 768px, // Medium
+"lg": 992px, // Large
+"xl": 1200px, // Extra large
+"xxl": 1400px // Extra extra large
+) !default;
+
+@mixin respond($from: null, $to: null) {
+  // Build media query conditions
+  $query: '';
+
+  // Check if 'from' breakpoint exists
+  @if $from and map-has-key($breakpoints, $from) {
+    $query: '(min-width: #{map-get($breakpoints, $from)})';
+  }
+  // Check if 'to' breakpoint exists
+  @if $to and map-has-key($breakpoints, $to) {
+    // If 'from' already has a value, append 'and'
+    @if $query != '' {
+      $query: '#{$query} and (max-width: #{map-get($breakpoints, $to) - 1px})';
+    }
+    @else {
+      $query: '(max-width: #{map-get($breakpoints, $to) - 1px})';
+    }
+  }
+  // Apply media query if a valid query is built
+  @if $query != '' {
+    @media #{$query} {
+      @content;
+    }
+  }
+  @else {
+    @warn "Unknown breakpoint: #{$from} or #{$to}.";
+  }
+}

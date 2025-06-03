@@ -1,0 +1,33 @@
+@import '../../../assets/scss/variables.scss';
+:host {
+  ::ng-deep {
+    .custom-slider {
+      .ngx-slider {
+        .ngx-slider-bubble {
+          color: $primary;
+        }
+
+        .ngx-slider-bar {
+          background: $white-gray;
+          height: 5px;
+        }
+
+        .ngx-slider-selection {
+          background: $primary;
+        }
+
+        .ngx-slider-pointer {
+          width: 16px;
+          height: 16px;
+          top: -6px;
+          bottom: 0;
+          background-color: $primary;
+
+          &:after {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

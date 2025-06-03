@@ -1,0 +1,143 @@
+<div class="modal-body p-2" ngbAutoFocus>
+  <!--EXISTING FILE VIEW-->
+  <ng-container *ngIf="!data?.isUploaded && data?.mode != 'View Only';else newlyUploaded">
+    <ng-container *ngIf="file;else noFile">
+      <ng-container *ngIf="(fileType == 'png' || fileType == 'jpeg' || fileType == 'jpg' || fileType == 'svg');else elseExtBlock">
+        <div class="img-wrapper">
+          <img class="w-100 mb-2" [src]="file" />
+        </div>
+      </ng-container>
+      <ng-template #elseExtBlock>
+        <ng-container [ngSwitch]="fileType">
+          <ng-container *ngSwitchCase="'pdf'">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+              <img height="80" width="80" src="/assets/images/pdf.png" alt="" />
+              <br />
+              <a class="text-decoration-none text-capitalize" href="{{file}}" target="_blank">click to open PDF </a>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="'xlsx'">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+              <img height="80" width="80" src="/assets/images/excel.png" alt="" />
+              <br />
+              <a class="text-decoration-none text-capitalize" href="{{file}}" target="_blank">click to open XLSX </a>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="'xls'">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+              <img height="80" width="80" src="/assets/images/excel.png" alt="" />
+              <br />
+              <a class="text-decoration-none text-capitalize" href="{{file}}" target="_blank">click to open XLS </a>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="'mp4'">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+              <img height="80" width="80" src="/assets/images/mp4.png" alt="" />
+              <br />
+              <a class="text-decoration-none text-capitalize cursor-pointer" (click)="openMP4FileModal(mp4Modal)">click to open MP4</a>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+    </ng-container>
+    <ng-template #noFile>
+      <p class="mx-0 my-3">No attachemnt...</p>
+    </ng-template>
+  </ng-container>
+  <!-- View Only Image -->
+  <ng-container *ngIf="data?.mode === 'View Only'">
+    <ng-container *ngIf="(fileType == 'png' || fileType == 'jpeg' || fileType == 'jpg' || fileType == 'svg');else elseExtViewBlock">
+      <div class="img-wrapper">
+        <img class="w-100 mb-2" [src]="viewSrc" />
+      </div>
+    </ng-container>
+    <ng-template #elseExtViewBlock>
+      <ng-container [ngSwitch]="fileType">
+        <ng-container *ngSwitchCase="'pdf'">
+          <div class="d-flex justify-content-center flex-column align-items-center">
+            <img height="80" width="80" src="/assets/images/pdf.png" alt="" />
+            <br />
+            <a class="text-decoration-none text-capitalize" href="{{viewSrc}}" target="_blank">click to open PDF </a>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'xlsx'">
+          <div class="d-flex justify-content-center flex-column align-items-center">
+            <img height="80" width="80" src="/assets/images/excel.png" alt="" />
+            <br />
+            <a class="text-decoration-none text-capitalize" href="{{viewSrc}}" target="_blank">click to open XLSX </a>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'xls'">
+          <div class="d-flex justify-content-center flex-column align-items-center">
+            <img height="80" width="80" src="/assets/images/excel.png" alt="" />
+            <br />
+            <a class="text-decoration-none text-capitalize" href="{{viewSrc}}" target="_blank">click to open XLS </a>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'mp4'">
+          <div class="d-flex justify-content-center flex-column align-items-center">
+            <img height="80" width="80" src="/assets/images/mp4.png" alt="" />
+            <br />
+            <a class="text-decoration-none text-capitalize cursor-pointer" (click)="openMP4FileModal(mp4Modal)">click to open MP4</a>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-template>
+  </ng-container>
+  <!-- View Only Image Ends -->
+  <!--NEWLY UPLOADED FILE-->
+  <ng-template #newlyUploaded>
+    <ng-container *ngIf="(fileType == 'image/png' || fileType == 'image/jpeg' || fileType == 'image/jpg' || fileType == 'image/svg+xml');else pdff">
+      <div class="img-wrapper">
+        <img class="w-100" [src]="file" />
+      </div>
+    </ng-container>
+    <ng-template #pdff>
+      <ng-container *ngIf="data?.mode != 'View Only'">
+        <ng-container [ngSwitch]="fileType">
+          <ng-container *ngSwitchCase="fileExtensionEnum.PDF">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+              <img height="80" width="80" src="/assets/images/pdf.png" alt="" />
+              <br />
+              <a class="text-decoration-none text-capitalize" [href]="file" target="_blank">click to open PDF </a>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="fileExtensionEnum.XLSX">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+              <img height="80" width="80" src="/assets/images/excel.png" alt="" />
+              <br />
+              <a class="text-decoration-none text-capitalize" [href]="file" target="_blank">click to open XLSX</a>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="fileExtensionEnum.XLS">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+              <img height="80" width="80" src="/assets/images/excel.png" alt="" />
+              <br />
+              <a class="text-decoration-none text-capitalize" [href]="file" target="_blank">click to open XLS</a>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="fileExtensionEnum.MP4">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+              <img height="80" width="80" src="/assets/images/mp4.png" alt="" />
+              <br />
+              <a class="text-decoration-none text-capitalize cursor-pointer" (click)="openMP4FileModal(mp4Modal)">click to open MP4</a>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-template>
+  </ng-template>
+  <div class="d-flex justify-content-end gap-2 mt-3">
+    <button type="button" class="btn btn-outline-dark" (click)="_activeModal.close('Close click')">
+      Close
+    </button>
+  </div>
+</div>
+<ng-template #mp4Modal let-modal>
+  <div class="modal-body p-2">
+    <video id="videoPreview" style="width:100%;" controls [src]="file"></video>
+    <div class="d-flex justify-content-end gap-2 mt-3">
+      <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('Close click')">Close</button>
+    </div>
+  </div>
+</ng-template>

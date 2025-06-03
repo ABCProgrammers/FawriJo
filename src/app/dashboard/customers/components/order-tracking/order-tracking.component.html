@@ -1,0 +1,48 @@
+<div class="modal-header justify-content-between align-items-center">
+  <h6 ngbAutoFocus class="font-20 fw-600">Order Tracking</h6>
+</div>
+<div class="modal-body">
+  <div class="tracking-wrapper mb-3">
+    <div class="order-status">
+      <div class="icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="d-flex flex-column gap-2 status-text">
+        <div class="d-flex align-items-center gap-2">
+          <p>Pending</p>
+          <div class="line"></div>
+        </div>
+        <span class="font-13 text-color">02/06/2025 01:23 PM • Order created</span>
+      </div>
+    </div>
+    <div class="order-status">
+      <div class="icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="d-flex flex-column gap-2 status-text">
+        <div class="d-flex align-items-center gap-2">
+          <p>Succeeded</p>
+          <div class="line"></div>
+        </div>
+        <span class="font-13 text-color">02/06/2025 01:23 PM • Driver took the order</span>
+      </div>
+    </div>
+    <div class="order-status">
+      <div class="icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="d-flex flex-column gap-2 status-text">
+        <div class="d-flex align-items-center gap-2">
+          <p>Delivered</p>
+          <div class="line"></div>
+        </div>
+        <span class="font-13 text-color">02/06/2025 01:23 PM • Driver delivered the order</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer border-top-0">
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-outline-dark" (click)="_activeModal.close()">Cancel</button>
+  </div>
+</div>

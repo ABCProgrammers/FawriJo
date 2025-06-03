@@ -1,0 +1,53 @@
+<aside class="side-menu-wrapper" [style.width.px]="isCollapsed && '60' || '275'">
+  <div class="logo d-flex justify-content-center align-items-center">
+    <img class="cursor-pointer" [routerLink]="'/dashboard'" [src]="'/assets/' + (isCollapsed && 'logo.svg' || 'logo.svg')" height="56" alt="logo" />
+    <i *ngIf="!isCollapsed" class="d-md-block d-lg-none fas fa-circle-arrow-left cursor-pointer font-22" (click)="SideNavToggle()"></i>
+  </div>
+  <!--If menu collapsed don't show menu and submenu name in all cases-->
+  <ul [ngStyle]="isCollapsed && {padding:'12px 0px'}">
+    <ng-container *ngFor="let menuItem of menuList">
+      <ng-container *ngIf="menuItem?.routeName;else noRoute">
+        <li>
+          <a routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact:menuItem?.exactActiveRoute ?? true}"
+             [routerLink]="menuItem?.routeName"
+             [class.justify-content-center]="isCollapsed">
+            <svg-icon [src]="menuItem?.iconDark || '/assets/images/image-placeholder.svg'" [svgStyle]="{'width.px':'20','height.px':'20'}"> </svg-icon>
+            <ng-container *ngIf="!isCollapsed">
+              {{ menuItem.name }}
+            </ng-container>
+          </a>
+        </li>
+      </ng-container>
+      <ng-template #noRoute>
+        <!--No route means the menu has submenus-->
+        <li (click)="toggleSubMenu(menuItem)">
+          <a href="javascript:void(0);" [class.justify-content-center]="isCollapsed">
+            <svg-icon [src]="menuItem?.iconDark || '/assets/images/image-placeholder.svg'" [svgStyle]="{'width.px':'20','height.px':'20'}"> </svg-icon>
+            <ng-container *ngIf="!isCollapsed">
+              {{ menuItem.name }}
+              <i *ngIf="menuItem?.subMenu?.length > 0" class="fas d-flex justify-content-end flex-grow-1"
+                 [ngClass]="menuItem.subMenuVisible && 'fa-angle-up' || 'fa-angle-down'"></i>
+            </ng-container>
+          </a>
+          <ul class="nested-menu" *ngIf="menuItem.subMenu && menuItem.subMenuVisible">
+            <li>
+              <ng-container *ngFor="let subMenuItem of menuItem.subMenu">
+                <a [routerLink]="subMenuItem?.routeName"
+                   (click)="$event.stopPropagation();"
+                   routerLinkActive="active"
+                   [routerLinkActiveOptions]="{exact:subMenuItem?.exactActiveRoute ?? true}">
+                  <svg-icon [src]="subMenuItem?.iconDark || '/assets/images/image-placeholder.svg'" [svgStyle]="{'width.px':'20','height.px':'20'}"> </svg-icon>
+                  <ng-container *ngIf="!isCollapsed">
+                    {{ subMenuItem.name }}
+                  </ng-container>
+                </a>
+              </ng-container>
+            </li>
+          </ul>
+        </li>
+      </ng-template>
+    </ng-container>
+  </ul>
+</aside>
+

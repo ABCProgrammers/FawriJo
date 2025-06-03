@@ -1,0 +1,54 @@
+<h4 class="font-24 fw-600 mb-3">Ahmad Jamal – Total Amount: <span class="success-clr">129 JOD</span></h4>
+<form [formGroup]="filterForm">
+  <div class="row mb-3">
+    <div class="col-4">
+      <div class="row">
+        <div class="col-5">
+          <ng-select [items]="transactionTypeList"
+                     formControlName="type"
+                     placeholder="Transaction Type"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID"
+                     class="ng-select-filter">
+          </ng-select>
+        </div>
+        <div class="col-7 mb-3">
+          <div class="myinput-group">
+            <input type="text"
+                   bsDaterangepicker
+                   placement="bottom"
+                   class="form-control"
+                   placeholder="Transaction Date (From - To)"
+                   formControlName="creationDate" />
+            <span *ngIf="filterForm.get('creationDate').value" class="right">
+              <i (click)="resetControlValue('creationDate')" class="cursor-pointer fas fa-times"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-8 justify-content-end gap-2 d-flex">
+      <button type="button" class="btn btn-outline-dark white-bg fw-400">
+        <i class="fa-solid fa-download"></i> Export Wallet Report
+      </button>
+    </div>
+  </div>
+</form>
+<appDataTable [config]="tableConfig"
+              [columns]="tableColumns"
+              [data]="dataList"
+              [page]="pageNo"
+              [total]="total"
+              [limit]="limit"
+              (pageUpdated)="onPageChange($event)">
+  <ng-template tableDataColumn="charge" let-row="row">
+    <span class="text-decoration-underline primary-clr cursor-pointer">#1234578</span>
+  </ng-template>
+  <ng-template tableDataColumn="status" let-row="row">
+    <div class="status-tag"
+         [style.background-color]="row?.status?.lookupBGColor"
+         [style.color]="row?.status?.lookupTextColor">
+      {{row?.status?.lookupNameEN?.lookupName}}
+    </div>
+  </ng-template>
+</appDataTable>

@@ -1,0 +1,50 @@
+@import '../../../assets/scss/_variables.scss';
+@import '../../../media-queries.scss';
+
+.header-wrapper {
+  height: 72px;
+  background-color: $white;
+  box-shadow: 0px 0px 9px 1px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid $border-color;
+
+  .user-info {
+    border: 1px solid $border-color;
+    padding: 7px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+
+    .profile-image {
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      overflow: hidden;
+
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .dropdown-toggle {
+      &:after {
+        border: none;
+      }
+    }
+
+    .dropdown-item {
+      font-size: 14px;
+      padding: 10px 1rem;
+
+      &:hover {
+        background: $primary;
+      }
+    }
+  }
+
+  @include respond(null,'md') {
+    .header-title {
+      font-size: 16px !important;
+    }
+  }
+}

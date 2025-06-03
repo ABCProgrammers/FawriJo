@@ -1,0 +1,23 @@
+:host {
+  .shape-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .shape-text {
+  }
+
+  .shape-container {
+    overflow: hidden;
+  }
+
+  .shape-circle {
+    border-radius: 50%;
+  }
+
+  .shape-square {
+    aspect-ratio: 1 / 1;
+  }
+}

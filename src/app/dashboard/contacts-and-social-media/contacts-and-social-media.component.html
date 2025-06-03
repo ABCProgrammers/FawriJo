@@ -1,0 +1,40 @@
+<app-card class="p-4">
+  <div ngbAccordion class="custom-accordian" [destroyOnHide]="true" [closeOthers]="true">
+    <div ngbAccordionItem>
+      <h6 ngbAccordionHeader>
+        <button ngbAccordionButton class="font-20 fw-600">Contact Us</button>
+      </h6>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <app-contacts></app-contacts>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div ngbAccordionItem>
+      <h6 ngbAccordionHeader>
+        <button ngbAccordionButton class="font-20 fw-600">Social Media</button>
+      </h6>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <app-social-media></app-social-media>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div ngbAccordionItem>
+      <h6 ngbAccordionHeader>
+        <button ngbAccordionButton class="font-20 fw-600">Addresses</button>
+      </h6>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <app-addresses></app-addresses>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,131 @@
+<form [formGroup]="filterForm">
+  <div class="row mb-3">
+    <div class="col-4">
+      <div class="row gx-0 gx-2">
+        <div class="col-7">
+          <div class="myinput-group">
+            <span class="left"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search by Name" formControlName="search" />
+            <span *ngIf="filterForm.get('search').value" class="right"><i (click)="resetControlValue('search')" class="cursor-pointer fas fa-times"></i></span>
+          </div>
+        </div>
+        <div class="col-5">
+          <ng-select [items]="statusList"
+                     formControlName="status"
+                     class="ng-select-filter"
+                     placeholder="Status"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div class="col-8 d-flex justify-content-end gap-2">
+      <button type="button" (click)="toggleFilters()" class="btn btn-outline-dark white-bg fw-400">
+        <i class="fa-solid fa-sliders"></i> Filter
+      </button>
+      <button (click)="handleAddClick()" type="button" class="btn btn-primary fw-300">
+        <i class="fas fa-plus"></i> Add Master Lookup
+      </button>
+    </div>
+  </div>
+  <app-card class="mb-4" *ngIf="showFilter">
+    <div class="row">
+      <div class="col">
+        <label class="input-label">Lookup Type</label>
+        <ng-select [items]="lookupTypesList"
+                   [multiple]="true"
+                   formControlName="lookupTypeId"
+                   class="ng-select-filter"
+                   placeholder="Lookup Type"
+                   bindLabel="lookupTypeName"
+                   bindValue="lookupTypeID">
+        </ng-select>
+      </div>
+      <div class="col">
+        <label class="input-label">Static</label>
+        <ng-select [items]="isStatic"
+                   formControlName="lookupStatic"
+                   class="ng-select-filter"
+                   placeholder="Static"
+                   bindLabel="label"
+                   bindValue="value">
+        </ng-select>
+      </div>
+      <div class="col">
+        <label class="input-label">Has Parent</label>
+        <ng-select [items]="hasParent"
+                   formControlName="hasParent"
+                   class="ng-select-filter"
+                   placeholder="Has Parent"
+                   bindLabel="label"
+                   bindValue="value">
+        </ng-select>
+      </div>
+      <div class="col">
+        <label class="input-label">Parent Type</label>
+        <ng-select [items]="parentTypeList"
+                   (change)="handleParentTypeChange($event)"
+                   formControlName="parentTypeLookup"
+                   class="ng-select-filter"
+                   placeholder="Parent Type"
+                   bindLabel="lookupTypeName"
+                   bindValue="lookupTypeID">
+        </ng-select>
+      </div>
+      <div class="col">
+        <label class="input-label">Parent Name</label>
+        <ng-select [items]="tempLookupList"
+                   formControlName="parentId"
+                   class="ng-select-filter"
+                   placeholder="Parent Name"
+                   bindLabel="lookupNameEN"
+                   bindValue="lookupID">
+        </ng-select>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-dark height-48 fw-400" (click)="toggleFilters()">Cancel</button>
+        <button type="button" class="btn btn-outline-light height-48 fw-400" (click)="filterForm.reset()">Reset All</button>
+      </div>
+    </div>
+  </app-card>
+</form>
+<appDataTable [config]="tableConfig"
+              [columns]="tableColumns"
+              [data]="lookupList"
+              [otherData]="otherData"
+              [page]="pageNo"
+              [total]="total"
+              [limit]="limit"
+              (sortUpdated)="onSortChange($event)"
+              (pageUpdated)="onPageChange($event)">
+  <ng-template tableDataColumn="lookupDefault" let-row="row">
+    {{row?.lookupDefault && 'Yes' || 'No'}}
+  </ng-template>
+  <ng-template tableDataColumn="lookStatic" let-row="row">
+    {{row?.lookStatic && 'Yes' || 'No'}}
+  </ng-template>
+  <ng-template tableDataColumn="image" let-row="row">
+    <div *ngIf="row?.lookupImage;else noImage" class="cell-image" (click)="handleViewFullImageClick(row)">
+      <img [src]="row?.lookupImage" />
+    </div>
+    <ng-template #noImage>---</ng-template>
+  </ng-template>
+  <ng-template tableDataColumn="status" let-row="row">
+    <div class="status-tag"
+         [style.background-color]="row?.status?.lookupBGColor"
+         [style.color]="row?.status?.lookupTextColor">
+      {{row?.status?.lookupNameEN}}
+    </div>
+  </ng-template>
+  <ng-template tableDataColumn="action" let-row="row">
+    <div class="d-flex gap-1">
+      <div (click)="handleAddClick(row)" [class.disable-elm]="row?.status?.lookupID == statusEnum.Deleted"
+           class="table-actions edit"><img src="/assets/images/edit.svg" /></div>
+      <div (click)="confirmDelete(row)" [class.disable-elm]="row?.status?.lookupID == statusEnum.Deleted"
+           class="table-actions delete"><img src="/assets/images/trash.svg" /></div>
+    </div>
+  </ng-template>
+</appDataTable>

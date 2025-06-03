@@ -1,0 +1,91 @@
+<!--{{filterForm.value | json}}-->
+<form [formGroup]="filterForm">
+  <div class="row mb-3">
+    <div class="col-8">
+      <div class="row">
+        <div class="col-3">
+          <div class="myinput-group">
+            <span class="left"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search by Identifier" formControlName="masterPagesIdentifier" />
+            <span *ngIf="filterForm.get('masterPagesIdentifier').value" class="right"><i (click)="resetControlValue('masterPagesIdentifier')" class="cursor-pointer fas fa-times"></i></span>
+          </div>
+        </div>
+        <div class="col-3">
+          <ng-select [items]="statusList"
+                     [multiple]="true"
+                     formControlName="status"
+                     placeholder="Status"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID"
+                     class="ng-select-filter">
+          </ng-select>
+
+        </div>
+        <div class="col-3">
+          <ng-select [items]="countryList"
+                     [multiple]="true"
+                     formControlName="countries"
+                     placeholder="Country"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID"
+                     class="ng-select-filter">
+          </ng-select>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-4 d-flex justify-content-end">
+      <a [routerLink]="appRoutes.MasterPages.Add" class="btn btn-primary d-inline-flex align-items-center gap-2">
+        <i class="fas fa-plus"></i> Create New Page
+      </a>
+    </div>
+  </div>
+</form>
+<app-card>
+  <div class="row mb-2">
+    <div class="col-2">
+      <div class="d-flex align-items-center page-size gap-2">
+        <label>Show</label>
+        <select (change)="handleChangePageSize($event)">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <appDataTable [config]="tableConfig"
+                [columns]="tableColumns"
+                [data]="dataList"
+                [page]="pageNo"
+                [total]="total"
+                [limit]="limit"
+                (sortUpdated)="onSortChange($event)"
+                (pageUpdated)="onPageChange($event)">
+    <ng-template tableDataColumn="country" let-row="row">
+      <div class="d-flex flex-column gap-2">
+        <span *ngFor="let item of row?.masterPagesCountry">{{item?.lookupNameEN.lookupName}}</span>
+      </div>
+    </ng-template>
+    <ng-template tableDataColumn="status" let-row="row">
+      <div class="status-tag"
+           [style.background-color]="row?.status?.lookupBGColor"
+           [style.color]="row?.status?.lookupTextColor">
+        {{row?.status?.lookupNameEN.lookupName}}
+      </div>
+    </ng-template>
+    <ng-template tableDataColumn="action" let-row="row">
+      <div class="d-flex gap-1">
+        <div class="table-actions view" (click)="handleActionClick(row,'view')"><i class="fas fa-eye"></i></div>
+        <div class="table-actions edit" (click)="handleActionClick(row,'edit')">
+          <img src="/assets/images/edit.svg" />
+        </div>
+        <div class="table-actions delete" (click)="confirmDelete(row)">
+          <img src="/assets/images/trash.svg" />
+        </div>
+      </div>
+    </ng-template>
+  </appDataTable>
+</app-card>

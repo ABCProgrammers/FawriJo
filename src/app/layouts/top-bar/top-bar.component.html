@@ -1,0 +1,24 @@
+
+<header class="header-wrapper p-4">
+  <div class="d-flex align-items-center justify-content-between h-100">
+    <div class="d-flex align-items-center gap-3">
+      <i class="fas cursor-pointer font-22" [ngClass]="iscollapse && 'fa-circle-arrow-right' || 'fa-circle-arrow-left'" (click)="SideNavToggle()"></i>
+      <h4 class="fw-600 font-20">{{pageTitle}}</h4>
+    </div>
+    <div ngbDropdown class="d-inline-block" placement="bottom-end">
+      <div class="user-info d-flex align-items-center gap-2" ngbDropdownToggle>
+        <span>{{userDetails?.fullNameEN}}</span>
+        <div class="profile-image">
+          @if(userDetails?.profileImage){
+          <img [src]="userDetails?.profileImage"/>
+          }@else{
+          <p class="text-white fw-600">{{getInitials(_tokenService?.getUser?.fullNameEN)}}</p>
+          }
+        </div>
+      </div>
+      <div ngbDropdownMenu>
+        <button ngbDropdownItem type="button" (click)="handleLogoutClick()">Logout</button>
+      </div>
+    </div>
+  </div>
+</header>

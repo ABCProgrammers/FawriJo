@@ -1,0 +1,86 @@
+<form [formGroup]="filterForm">
+  <div class="row mb-3">
+    <div class="col-4">
+      <div class="row">
+        <div class="col-6">
+          <ng-select [items]="transactionTypeList"
+                     formControlName="type"
+                     placeholder="Driver Name"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID"
+                     class="ng-select-filter">
+          </ng-select>
+        </div>
+        <div class="col-6">
+          <ng-select [items]="transactionTypeList"
+                     formControlName="type"
+                     placeholder="Transaction Status"
+                     bindLabel="lookupNameEN"
+                     bindValue="lookupID"
+                     class="ng-select-filter">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div class="col-8 justify-content-end gap-2 d-flex">
+      <button type="button" (click)="toggleFilters()" class="btn btn-outline-dark white-bg">
+        <i class="fa-solid fa-sliders"></i> Filter
+      </button>
+      <button type="button" class="btn btn-outline-dark white-bg fw-400">
+        <i class="fa-solid fa-download"></i> Export Wallet Report
+      </button>
+    </div>
+  </div>
+  <app-card class="mb-4" *ngIf="showFilter">
+    <div class="row">
+      <label class="input-label">Transaction Created (From - To)</label>
+      <div class="col-4 mb-3">
+        <div class="myinput-group">
+          <input type="text"
+                 bsDaterangepicker
+                 placement="bottom"
+                 class="form-control"
+                 placeholder="Transaction Created (From - To)"
+                 formControlName="creationDate" />
+          <span *ngIf="filterForm.get('creationDate').value" class="right">
+            <i (click)="resetControlValue('creationDate')" class="cursor-pointer fas fa-times"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-dark height-48 fw-400" (click)="toggleFilters()">Cancel</button>
+        <button type="button" class="btn btn-outline-light height-48 fw-400" (click)="resetFilterForm()">Reset All</button>
+      </div>
+    </div>
+  </app-card>
+</form>
+<appDataTable [config]="tableConfig"
+              [columns]="tableColumns"
+              [data]="dataList"
+              [page]="pageNo"
+              [total]="total"
+              [limit]="limit"
+              (pageUpdated)="onPageChange($event)">
+  <ng-template tableDataColumn="customerName" let-row="row">
+    <div class="d-flex align-items-center gap-2">
+      <app-shape-card [imageUrl]="row?.customerProfileImage || '/assets/images/user-image.png'"
+                      [customClass]="''"
+                      [customStyles]="{borderRadius:'50%',height:'40px', width:'40px'}">
+      </app-shape-card>
+      {{row?.fullName}}
+    </div>
+  </ng-template>  <ng-template tableDataColumn="status" let-row="row">
+    <div class="status-tag"
+         [style.background-color]="row?.status?.lookupBGColor"
+         [style.color]="row?.status?.lookupTextColor">
+      {{row?.status?.lookupNameEN?.lookupName}}
+    </div>
+  </ng-template>
+  <ng-template tableDataColumn="action" let-row="row">
+    <div class="d-flex gap-1">
+      <div class="table-actions wallet" (click)="handleAddClick(row)"><img src="/assets/images/wallet.svg" /> </div>
+    </div>
+  </ng-template>
+</appDataTable>

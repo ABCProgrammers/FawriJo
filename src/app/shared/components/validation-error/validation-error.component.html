@@ -1,0 +1,5 @@
+<ng-container *ngIf="control?.errors">
+  <ng-container *ngIf="control?.invalid && (control?.dirty || control?.touched)">
+    <span class="validation-error d-block" *ngFor="let key of validationKeys">{{ errorMessages[key] }}</span>
+  </ng-container>
+</ng-container>

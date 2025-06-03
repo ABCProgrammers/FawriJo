@@ -1,0 +1,29 @@
+export enum UserType {
+  Company = 25006,
+  SystemAdmin = 25005,
+}
+export enum LanguageEnum {
+  Arabic = 40001,
+  English = 40002,
+}
+export enum MediaTypeEnum{
+  Image = 89001,
+  LocalVideo = 89003,
+  YoutubeVideo = 89002,
+}
+export enum EngagementTypeEnum {
+  Like = 97001,
+  View = 97002,
+  Click = 97003,
+}
+export enum Status {
+  Active = 1001,
+  InActive = 1002,
+  Deleted = 1003,
+}
+export enum FileExtensionEnum {
+  MP4 = 'video/mp4',
+  XLS = 'application/vnd.ms-excel',
+  XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  PDF = 'application/pdf',
+}

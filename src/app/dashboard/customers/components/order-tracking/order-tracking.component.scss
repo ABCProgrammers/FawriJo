@@ -1,0 +1,52 @@
+@import '../../../../../assets/scss/_variables.scss';
+
+:host {
+  .tracking-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .order-status {
+      display: flex;
+      gap: 15px;
+      flex-grow: 1;
+
+      .icon {
+        height: 28px;
+        width: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $primary-200;
+        flex-shrink: 0;
+
+        i {
+          color: $primary;
+        }
+      }
+
+      .status-text {
+        flex-grow: 1;
+
+        p {
+          flex-shrink: 0;
+        }
+
+        .line {
+          height: 1px;
+          background: $primary;
+          flex-grow: 1;
+        }
+      }
+
+      &:last-child {
+        .status-text {
+          .line {
+            height: 0px;
+          }
+        }
+      }
+    }
+  }
+}

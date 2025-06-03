@@ -1,0 +1,119 @@
+<form [formGroup]="f">
+  <app-card>
+    <div class="d-flex justify-content-between gap-2 align-items-center">
+      <h6 class="font-24 fw-600 mb-4">Details</h6>
+      <div class="form-check form-switch">
+        <label class="form-check-label" for="isActive">Status</label>
+        <input class="form-check-input" type="checkbox" formControlName="status" id="isActive" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6 mb-3">
+        <label class="input-label">Country</label>
+        <ng-select [items]="countryList"
+                   [multiple]="true"
+                   formControlName="masterPagesCountry"
+                   placeholder="Country"
+                   bindLabel="lookupNameEN"
+                   bindValue="lookupID"
+                   class="input-dropdown">
+        </ng-select>
+      </div>
+      <div class="col-6 mb-3">
+        <label class="input-label">Identifier</label>
+        <input type="text" formControlName="masterPagesIdentifier" class="form-control input-control" placeholder="Identifier" />
+        <validation-error [control]="formGroup.get('masterPagesIdentifier')" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+      <div class="col-6">
+        <div class="row">
+          <!--UPPER IMAGE-->
+          <div class="col-6">
+            <label class="input-label">Page Upper Image</label>
+            <div *ngIf="!view" class="upload-file-container mt-2" (click)="inputFile.click()">
+              <div class="flex-center">
+                <p class="font-14"><i class="fas fa-cloud-arrow-up me-1"></i> Upload</p>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <!--NEWLY UPLOAD FILE-->
+              <div *ngIf="uploadedFileUpper?.base64" class="mt-2 upload-logo view-logo p-0">
+                <img class="img-cover" [src]="uploadedFileUpper?.base64" />
+                <i class="remove-media-icon far fa-trash-can red-clr" (click)="removeFileHandle($event,'upper')"></i>
+              </div>
+              <!--FILE FROM API-->
+              <div *ngIf="upperFile" class="mt-2 upload-logo view-logo p-0" (click)="viewUploadedFiles('upper')">
+                <img class="img-cover" [src]="upperFile" />
+              </div>
+            </div>
+            <input type="file" id="upperImage" #inputFile accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,'upper')" hidden />
+          </div>
+          <!--LOWER IMAGE-->
+          <div class="col-6">
+            <label class="input-label">Page Lower Image</label>
+            <div *ngIf="!view" class="upload-file-container mt-2" (click)="inputFileLower.click()">
+              <div class="flex-center">
+                <p class="font-14"><i class="fas fa-cloud-arrow-up me-1"></i> Upload</p>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <!--NEWLY UPLOAD FILE-->
+              <div *ngIf="uploadedFileLower?.base64" class="mt-2 upload-logo view-logo p-0">
+                <img class="img-cover" [src]="uploadedFileLower?.base64" />
+                <i class="remove-media-icon far fa-trash-can red-clr" (click)="removeFileHandle($event,'lower')"></i>
+              </div>
+              <!--FILE FROM API-->
+              <div *ngIf="lowerFile" class="mt-2 upload-logo view-logo p-0" (click)="viewUploadedFiles('lower')">
+                <img [src]="lowerFile" />
+              </div>
+            </div>
+            <input type="file" id="lowerImage" #inputFileLower accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,'lower')" hidden />
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
+  <app-card class="mt-4">
+    <h6 class="font-24 fw-600 mb-3">Content</h6>
+    <div class="language-wrapper flex-grow-1 mb-3">
+      <div class="item" *ngFor="let item of languageList"
+           (click)="handleLanguageTabClick(item)" [class.active]="activeTabs == item?.lookupID">
+        <div class="d-flex gap-2 align-items-center">
+          <svg-icon src="/assets/images/language.svg"></svg-icon>
+          <p>{{item?.lookupNameEN}}</p>
+        </div>
+      </div>
+    </div>
+    <ng-container formArrayName="languages">
+      <ng-container *ngFor="let lang of langArray.controls; let langIndex=index" [formGroupName]="langIndex">
+        <ng-container *ngIf="activeTabs == lang.value.languageID">
+          <div class="mb-3">
+            <label class="input-label asterik">Page Name</label>
+            <input type="text" formControlName="masterPagesName" class="form-control input-control" placeholder="Page Name" />
+            <validation-error [control]="lang.get('masterPagesName')" [errorMessages]="{required:'Input is required'}"></validation-error>
+          </div>
+          <div class="mb-3">
+            <label class="input-label asterik">Text</label>
+            <quill-editor [styles]="{height: '230px'}"
+                          placeholder="Enter text here..."
+                          formControlName="masterPagesText"
+                          (onNativeBlur)="onQuillContentChanged($event,langIndex)"
+                          class="d-block">
+            </quill-editor>
+            <validation-error [control]="lang.get('masterPagesText')" [errorMessages]="{required:'Input is required'}"></validation-error>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <div class="d-flex justify-content-end gap-2 mt-3">
+      <ng-container *ngIf="langArray?.errors">
+        <ng-continer *ngIf="langArray?.invalid && langArray.touched">
+          <span class="validation-error">At least one language tab must have all fields filled.</span>
+        </ng-continer>
+      </ng-container>
+    </div>
+  </app-card>
+  <div class="d-flex justify-content-end gap-2 mt-3">
+    <button type="button" class="btn btn-outline-dark" [routerLink]="appRoutes.MasterPages.Listing">Cancel</button>
+    <button *ngIf="!view" type="button" class="btn btn-primary" (click)="saveData()">{{'Save Page'}}</button>
+  </div>
+</form>

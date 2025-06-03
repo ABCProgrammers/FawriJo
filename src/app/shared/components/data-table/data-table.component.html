@@ -1,0 +1,89 @@
+
+<ng-container *ngIf="columns?.length">
+  <div class="d-flex align-items-center justify-content-end" *ngIf="!config?.hideTotalRecord">
+    <ng-container *ngIf="totalRowsRef?.template;else elseBlock">
+      <ng-container *ngTemplateOutlet="totalRowsRef.template"></ng-container>
+    </ng-container>
+    <ng-template #elseBlock>
+      <p class="sg-clr font-14 fw-600 mb-2">{{ config?.totalRecordText || "Total: " }}{{ total }}</p>
+    </ng-template>
+  </div>
+  <div class="table-wrapper-grid" style="--grid-template: {{config?.tableLayout}}">
+    <div class="table-header">
+      <!--Multi Select Checkbox-->
+      <div *ngIf="config?.multiSelect" class="header-cell">
+        <input class="form-check-input" [(ngModel)]="multiSelect" type="checkbox" (change)="toggleMultiSelection($event)" />
+      </div>
+      <!--Table Headers-->
+      <div class="header-cell" *ngFor="let column of columns; let index = index">
+        <ng-container *ngTemplateOutlet=" columnHeadTemplates[column.key] || tableHeadDefaultTemplate;
+            context: { column: getColumnByKey(column.key), index: index }">
+        </ng-container>
+        <ng-container *ngIf="column.canSort && tempData?.length">
+          <div class="d-flex cursor-pointer flex-column" (click)="onSort(column)">
+            <img class="sorting-img" src="/assets/images/sorting.svg" />
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="table-body">
+      <!--Table Row-->
+      <div class="table-row" [ngClass]="config?.hasRowShadow && 'row-hover'" *ngFor="let item of tempData; let i = index">
+        <div *ngIf="config?.multiSelect" class="body-cell">
+          <input class="form-check-input m-0"
+                 type="checkbox"
+                 [(ngModel)]="item.isChecked"
+                 (change)="handleSelectionChange()" />
+        </div>
+        <!--Table Cell-->
+        <div class="body-cell" *ngFor="let column of columns; let idx = index"
+             [ngStyle]="mergeStyles(column)"
+             (click)="handleTrClick(item, column.key)">
+          <ng-container *ngTemplateOutlet="
+              columnTemplates[column.key] || columnDefaultTemplate;
+              context: {
+                $implicit: getItemValue(item, column.key, idx),
+                row: item,
+                column: getColumnByKey(column.key),
+                index: i
+              }">
+          </ng-container>
+        </div>
+      </div>
+      <p *ngIf="!loading && !tempData?.length" class="no-data">No Data to Display</p>
+      <ng-container *ngIf="tFoot?.template">
+        <ng-container *ngTemplateOutlet="tFoot.template"></ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+<div class="paging-wrapper d-flex justify-content-between align-items-center"
+     *ngIf="config.paging && tempData.length && total > limit">
+  <h6 class="font-14">
+    Showing
+    <span>
+      {{ page * limit - (limit - 1) }} -
+      {{ tempData.length === limit ? page * limit : total }}
+    </span>
+    from
+    <span>{{ total }} </span> Records
+  </h6>
+  <ngb-pagination [collectionSize]="total"
+                  [page]="page"
+                  [pageSize]="limit"
+                  [maxSize]="3"
+                  [ellipses]="true"
+                  (pageChange)="onPageChange($event)"
+                  aria-label="Default pagination">
+    <ng-template ngbPaginationPrevious>Previous</ng-template>
+    <ng-template ngbPaginationNext>Next</ng-template>
+  </ngb-pagination>
+</div>
+
+<ng-template #columnDefaultTemplate let-value let-row="row" let-column="column">
+  {{column.isDate ? (value | date : column.format || "dd-MMM-YYYY") : value}}
+</ng-template>
+
+<ng-template #tableHeadDefaultTemplate let-column="column">
+  {{ column.label }}
+</ng-template>

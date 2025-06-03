@@ -1,0 +1,16 @@
+<div class="modal-header align-items-center justify-content-between">
+  <h6 class="font-20 fw-500">{{data?.title || 'Attachments'}}</h6>
+</div>
+<div class="modal-body" ngbAutoFocus>
+  <div class="d-flex flex-column" *ngIf="data?.attachments?.length;else noAttachments">
+    <ng-container *ngFor="let item of data?.attachments">
+      <view-file [customClass]="'mb-2'" *ngIf="item" [download]="true" [file]="item"></view-file>
+    </ng-container>
+  </div>
+  <ng-template #noAttachments>
+    <p class="fw-500">No Attachments</p>
+  </ng-template>
+</div>
+<div class="modal-footer border-0 mt-3">
+  <button class="btn btn-outline-dark" type="button" (click)="_activeModal.close()">Cancel</button>
+</div>

@@ -1,0 +1,167 @@
+
+<div class="modal-header justify-content-between align-items-center">
+  <h6 class="font-20 fw-600">{{data?.edit && 'Edit User' || 'Add User'}}</h6>
+  <i class="fas fa-times cursor-pointer font-20 cbs-clr" (click)="_activeModal.close()"></i>
+</div>
+<!--{{f.value | json}}-->
+<div class="modal-body">
+  <form [formGroup]="formGroup">
+    <div class="row">
+      <div class="col-12 d-flex align-items-center justify-content-end mt-3">
+        <div class="form-check form-switch">
+          <label class="form-check-label" for="isActive">Active</label>
+          <input class="form-check-input" type="checkbox" formControlName="status" id="isActive" />
+        </div>
+      </div>
+      <div class="col-6">
+        <label class="input-label asterik">User No</label>
+        <input type="text" ngbAutoFocus
+               formControlName="userNo"
+               class="form-control input-control"
+               placeholder="User No" />
+        <validation-error [control]="f.get('userNo')" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+      <div class="col-6">
+        <label class="input-label asterik">User Login</label>
+        <input type="text"
+               formControlName="userLogin"
+               class="form-control input-control"
+               placeholder="User Login" />
+        <validation-error [control]="f.get('userLogin')" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-6">
+        <label class="input-label asterik">Full Name EN</label>
+        <input type="text"
+               formControlName="fullNameEN"
+               class="form-control input-control"
+               placeholder="Full Name EN" />
+        <validation-error [control]="f.get('fullNameEN')" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+      <div class="col-6">
+        <label class="input-label asterik">Full Name AR</label>
+        <input type="text"
+               arabicOnly
+               formControlName="fullNameAR"
+               class="form-control input-control"
+               placeholder="Full Name AR" />
+        <validation-error [control]="f.get('fullNameAR')" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-6">
+        <label class="input-label asterik">First Name</label>
+        <input type="text"
+               formControlName="firstName"
+               class="form-control input-control"
+               placeholder="First Name" />
+        <validation-error [control]="f.get('firstName')" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+      <div class="col-6">
+        <label class="input-label asterik">Last Name</label>
+        <input type="text"
+               formControlName="lastName"
+               class="form-control input-control"
+               placeholder="Last Name" />
+        <validation-error [control]="f.get('lastName')" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-6">
+        <label class="input-label">Gender</label>
+        <div class="d-flex gap-2 mt-2">
+          <div class="form-check" *ngFor="let item of genderList">
+            <input class="form-check-input" type="radio" [id]="item?.lookupID" [value]="item?.lookupID" formControlName="userGender">
+            <label class="form-check-label" [attr.for]="item?.lookupID">{{item?.lookupName}}</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <label class="input-label">Job Title</label>
+        <input type="text"
+               formControlName="userJobTitle"
+               class="form-control input-control"
+               placeholder="Job Title" />
+      </div>
+    </div>
+    <!--{{f.get('userMobile').value | json}}-->
+    <div class="row mt-3">
+      <div class="col-6">
+        <label class="input-label">Mobile</label>
+        <ngx-intl-tel-input [enableAutoCountrySelect]="true"
+                            [onlyCountries]="onlyCountries"
+                            [enablePlaceholder]="true"
+                            [customPlaceholder]="'Phone'"
+                            [searchCountryFlag]="true"
+                            [selectedCountryISO]="CountryISO.Jordan"
+                            [phoneValidation]="true"
+                            [separateDialCode]="separateDialCode"
+                            [numberFormat]="PhoneNumberFormat.National"
+                            formControlName="userMobile">
+        </ngx-intl-tel-input>
+        <ng-container *ngIf="f.get('userMobile')?.invalid && f.get('userMobile')?.touched">
+          <span *ngIf="f.get('userMobile')?.errors?.['required']" class="validation-error d-block">Input is required</span>
+          <span *ngIf="!f.get('userMobile')?.errors?.['validatePhoneNumber']?.valid" class="validation-error d-block">Invalid phone number</span>
+        </ng-container>
+      </div>
+      <div class="col-6">
+        <label class="input-label">Email</label>
+        <input type="text"
+               formControlName="userEmail"
+               class="form-control input-control"
+               placeholder="Email" />
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-6">
+        <label class="input-label asterik">User Type</label>
+        <ng-select placeholder="Select User Type"
+                   [items]="userTypeList"
+                   bindLabel="lookupNameEN"
+                   bindValue="lookupID"
+                   formControlName="userType"
+                   class="input-dropdown">
+        </ng-select>
+        <validation-error [control]="f.get('userType')" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <label class="input-label">Image</label>
+      <div class="col-6">
+        <div class="upload-file-container mb-2" (click)="inputFile.click()">
+          <div class="d-flex align-items-center justify-content-center ">
+            <p class="font-14"><i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload Image</p>
+          </div>
+        </div>
+        <input type="file" class="form-control" #inputFile accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event)" hidden />
+      </div>
+      <div class="col-6">
+        <!--IN CASE OFF ADDING FILES-->
+        <ng-container *ngIf="uploadedFile?.base64">
+          <view-file remove="true" [data]="{isUploaded:true,uploadedFile}" (removeFile)="removeFileHandle($event)"></view-file>
+        </ng-container>
+      </div>
+      <!--PREVIOUS UPLOADED FILES-->
+      <div class="col-12" *ngIf="data?.edit && data?.row?.profileImage">
+        <label class="input-label">Recent Attachment</label>
+        <view-file [file]="data?.row?.profileImage" [download]="true"></view-file>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-12">
+        <label class="input-label">Comments</label>
+        <input type="text"
+               formControlName="remarks"
+               class="form-control input-control"
+               placeholder="Comments" />
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer border-top-0">
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-outline-dark" (click)="_activeModal.close()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="saveData()">{{data?.edit && 'Save User' || 'Add User'}}</button>
+  </div>
+</div>
