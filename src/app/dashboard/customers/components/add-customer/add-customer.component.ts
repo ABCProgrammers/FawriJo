@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { catchError, of, forkJoin, takeUntil, Subject } from 'rxjs';
+import { catchError, of, forkJoin, takeUntil, Subject, debounceTime } from 'rxjs';
 import { HttpService } from '../../../../core/services/http.service';
 import { LookupService } from '../../../../core/services/lookup.service';
 import { ModalMessageComponent } from '../../../../shared/components/modal-message/modal-message.component';
@@ -48,17 +48,36 @@ export class AddCustomerComponent {
   ngOnInit() {
     this.initForm();
     this.getLookups();
+    this.f.get('fullName').valueChanges.pipe(debounceTime(500), takeUntil(this.destroy$)).subscribe(value => {
+      if (value) {
+        let fullNameArray = value.trim().split(' ');
+        if (fullNameArray.length > 1) {
+          let firstName = fullNameArray[0];
+          let familyName = fullNameArray.pop();
+          this.f.patchValue({ firstName, familyName });
+        }
+        else {
+          this.f.get('firstName').setValue(value);
+          this.f.get('familyName').setValue('');
+        }
+      }
+      else
+        this.f.get('firstName').setValue('');
+    })
+
   }
   initForm() {
     this.formGroup = this.fb.group({
-      customerName: ['', Validators.required],
-      customerEmail: ['', [Validators.required, Validators.email]],
+      fullName: ['', Validators.required],
+      firstName: ['', Validators.required],
+      familyName: ['', Validators.required],
+      nationalID: ['', Validators.required],
       customerPhone: ['', Validators.required],
       customerPassword: ['', Validators.required],
       customerCountry: [null, Validators.required],
-      customerCity: [null],
-      customerDOB: [null],
-      customerFavLanguage: [null],
+      customerCity: [null, Validators.required],
+      customerLevelID: [null, Validators.required],
+      businessCategoryID: [null],
       customerVerified: [true],
       status: [true],
     });
@@ -66,11 +85,13 @@ export class AddCustomerComponent {
       let row = this.data.row;
       this.f.patchValue(row);
       this.profileImage = row?.customerProfileImage;
+      this.cardImage = row?.idCardImage;
+      this.licenseImage = row?.licenseImage;
       let obj = {
-        customerFavLanguage: row?.customerFavLanguage?.lookupID,
         customerCountry: row?.customerCountry?.lookupID,
         customerCity: row?.customerCity?.lookupID,
-        customerDOB: new Date(this._httpService._helperService.formatDateToISO(row?.customerDOB)),
+        customerLevelID: row?.customerLevel?.lookupID,
+        businessCategoryID: row?.businessCategory?.lookupID,
       };
       this.f.patchValue(obj);
       this.f.disable();
@@ -81,11 +102,13 @@ export class AddCustomerComponent {
     const country$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=2&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const business$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=17&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const city$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=3&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    forkJoin([country$, business$, city$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
+    const type$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=26&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
+    forkJoin([country$, business$, city$,type$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
       this.countryList = response[0].data;
       this.businessTypeList = response[1].data;
       this.cityList = response[2].data;
       this.tempCityList = [...this.cityList];
+      this.customerTypeList = response[3].data;
       let desc = this.countryList.map(x => x?.translations[0]?.lookupDesc);
       desc.forEach(x => {
         let iso = x.split(':')[1].trim()?.toLowerCase();
@@ -115,18 +138,19 @@ export class AddCustomerComponent {
       this.f.markAllAsTouched();
       return;
     }
-    return;
     const value = this.f.value;
     this._httpService._spinnerService.show();
-    let controls = ['customerPhone', 'customerDOB', 'status', 'confirmPassword'];
+    let controls = ['customerPhone', 'status'];
     const formData = this._httpService._helperService.convertFormGroupToFormData(this.f, controls);
-    formData.append('customerDOB', (this._httpService._helperService.dateFormate(value?.customerDOB)) || '');
     formData.append('customerPhone', value.customerPhone.e164Number);
     formData.append('status', value.status && '1001' || '1002');
+    this.uploadProfileImage?.file && formData.append('customerProfileImage', this.uploadProfileImage.file);
+    this.uploadCardImage?.file && formData.append('IDCardImage', this.uploadCardImage.file);
+    this.uploadLicenseImage?.file && formData.append('licenseImage', this.uploadLicenseImage.file);
     let URL = this._httpService.apiUrl.Customers.AddCustomer;
     if (this.data?.edit) {
-      URL = this._httpService.apiUrl.Customers.AddCustomer;
-      formData.append('highlightID', this.data?.row?.highlightID);
+      URL = this._httpService.apiUrl.Customers.UpdateCustomerProfile;
+      formData.append('customerID', this.data?.row?.customerID);
     }
     this._httpService.post(`${URL}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
       next: response => {

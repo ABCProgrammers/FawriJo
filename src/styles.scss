@@ -67,7 +67,7 @@ ul {
 }
 
 p {
-  line-height: 1;
+  line-height: 1.15;
 }
 
 .border-color {
@@ -262,7 +262,7 @@ svg-icon {
   align-items: center;
   justify-content: center;
 
-  &.edit,&.save {
+  &.edit, &.save {
     background-color: #45b36926;
     cursor: pointer;
   }
@@ -276,6 +276,7 @@ svg-icon {
     background-color: $primary-200;
     cursor: pointer;
   }
+
   &.view {
     background-color: rgba(37, 99, 235, 0.15);
     cursor: pointer;
@@ -356,6 +357,7 @@ svg-icon {
   border-radius: 4px;
   padding: 7px 10px;
 }
+
 .order-status-tag {
   flex-direction: row;
   justify-content: center;
@@ -368,6 +370,7 @@ svg-icon {
   font-weight: 500;
   font-size: 14px;
 }
+
 .my-card {
   background: #ffffff;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.075);
@@ -443,7 +446,7 @@ svg-icon {
   border-radius: 8px;
   padding: 11px;
   cursor: pointer;
-  height:44px;
+  height: 44px;
 }
 
 .selected-file-container {
@@ -482,7 +485,8 @@ svg-icon {
 
     img {
       width: 100%;
-      object-fit: contain;
+      object-fit: cover;
+      height: 100%;
     }
   }
 }
@@ -533,6 +537,7 @@ quill-editor {
     height: 44px;
     border-radius: 6px;
     cursor: pointer;
+    background: $white-gray;
 
     svg {
       fill: $charcoal-black;

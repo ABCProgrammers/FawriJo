@@ -3,8 +3,8 @@
     <div class="col-2">
       <div class="myinput-group">
         <span class="left"><i class="fas fa-search"></i></span>
-        <input type="text" class="form-control" placeholder="Search by name" formControlName="search" />
-        <span *ngIf="filterForm.get('search').value" class="right"><i (click)="resetControlValue('search')" class="cursor-pointer fas fa-times"></i></span>
+        <input type="text" class="form-control" placeholder="Search by name" formControlName="customerFullName" />
+        <span *ngIf="filterForm.get('customerFullName').value" class="right"><i (click)="resetControlValue('customerFullName')" class="cursor-pointer fas fa-times"></i></span>
       </div>
     </div>
     <div class="col-4">
@@ -17,7 +17,6 @@
                      bindValue="lookupID"
                      class="ng-select-filter">
           </ng-select>
-
         </div>
         <div class="col-6">
           <ng-select [items]="countryList"
@@ -25,9 +24,9 @@
                      placeholder="Country"
                      bindLabel="lookupNameEN"
                      bindValue="lookupID"
+                     (change)="handleCountryChange($event)"
                      class="ng-select-filter">
           </ng-select>
-
         </div>
       </div>
     </div>
@@ -35,7 +34,7 @@
       <button type="button" (click)="toggleFilters()" class="btn btn-outline-dark white-bg">
         <i class="fa-solid fa-sliders"></i> Filter
       </button>
-      <button type="button" class="btn btn-outline-dark white-bg fw-400">
+      <button type="button" class="btn btn-outline-dark white-bg fw-400" (click)="handleExportCustomerClick()">
         <i class="fa-solid fa-download"></i> Export Customers Report
       </button>
       <button (click)="handleAddClick(null)" type="button" class="btn btn-primary">
@@ -86,7 +85,7 @@
       <div class="col-4 mb-3">
         <label class="input-label">Customer Type</label>
         <ng-select [items]="customerTypeList"
-                   formControlName="city"
+                   formControlName="customerLevelID"
                    placeholder="Status"
                    bindLabel="lookupNameEN"
                    bindValue="lookupID"
@@ -96,7 +95,7 @@
       <div class="col-4 mb-3">
         <label class="input-label">Business</label>
         <ng-select [items]="businessTypeList"
-                   formControlName="city"
+                   formControlName="businessCategoryID"
                    placeholder="Status"
                    bindLabel="lookupNameEN"
                    bindValue="lookupID"
@@ -133,11 +132,11 @@
   <ng-template tableHeadColumn="action" let-row="row">
     <div class="d-flex align-items-center justify-content-between flex-grow-1">
       <label>Action</label>
-      <div ngbDropdown class="d-inline-block table-action-dropdown">
+      <div ngbDropdown class="d-inline-block table-action-dropdown" *ngIf="multiSelectedItems.length">
         <i class="fa-solid fa-ellipsis-vertical cursor-pointer font-20" ngbDropdownToggle></i>
         <div ngbDropdownMenu class="dropdown-menu-end">
-          <button ngbDropdownItem type="button">Block Customer</button>
-          <button ngbDropdownItem type="button" (click)="handSendNotificationClick()">Send Notification</button>
+          <button ngbDropdownItem type="button" (click)="handleMultiActionClick('block')">Block Customer</button>
+          <button ngbDropdownItem type="button" (click)="handleMultiActionClick('notification')">Send Notification</button>
         </div>
       </div>
     </div>
@@ -161,7 +160,8 @@
   </ng-template>
   <ng-template tableDataColumn="action" let-row="row">
     <div class="d-flex gap-1">
-      <div class="table-actions wallet" [routerLink]="appRoutes.Customers.Wallet"><img src="/assets/images/wallet.svg" /> </div>
+      <div *ngIf="customerType.Driver == row?.customerLevel?.lookupID" class="table-actions wallet"
+           [routerLink]="appRoutes.Customers.Wallet" [queryParams]="{id:row?.customerID}"><img src="/assets/images/wallet.svg" /> </div>
       <div (click)="handleAddClick(row)" class="table-actions edit">
         <img src="/assets/images/edit.svg" />
       </div>

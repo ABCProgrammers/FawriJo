@@ -43,6 +43,15 @@ export const ApiUrls = {
   Customers: {
     AddCustomer: 'Customers/AddCustomer',
     GetCustomers: 'Customers/GetCustomers',
-    GetCustomersStatistics: 'Customers/GetCustomersStatistics',
+    UpdateCustomerProfile: 'Customers/UpdateCustomerProfile',
+    BlockCustomers: 'Customers/BlockCustomers',
+  },
+  Notifications: {
+    SendNotification: 'Notifications/SendNotification',
+  },
+  Wallet: {
+    ViewDriverReceivedAmounts: 'Wallet/ViewDriverReceivedAmounts',
+    ViewDriverWalletDetails: 'Wallet/ViewDriverWalletDetails',
+    AddMoneyToDriverWallet: 'Wallet/AddMoneyToDriverWallet',
   },
 }

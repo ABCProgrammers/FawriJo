@@ -2,16 +2,16 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { forkJoin, debounceTime, distinctUntilChanged, Subject, takeUntil, catchError, of } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Status } from '../../shared/enums/enums';
+import { CustomerType, Status } from '../../shared/enums/enums';
 import { HeaderService } from '../../core/services/header.service';
 import { HttpService } from '../../core/services/http.service';
-import { LookupService } from '../../core/services/lookup.service';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 import { ModalMessageComponent } from '../../shared/components/modal-message/modal-message.component';
 import { AddCustomerComponent } from './components/add-customer/add-customer.component';
 import { TableColumn, TableConfig } from '../../shared/components/data-table/IDataTable';
 import { SendCustomerNotificaionModalComponent } from './components/send-customer-notificaion-modal/send-customer-notificaion-modal.component';
 import { AppRoutes } from '../../shared/routes/appRoutes';
+import { ExportService } from '../../core/services/export.service';
 @Component({
   selector: 'app-customers',
   templateUrl: './customers.component.html',
@@ -24,13 +24,14 @@ export class CustomersComponent {
   total = 0;
   limit = 10;
   tableConfig: TableConfig = {
+    multiSelect: true,
     paging: true,
     hideTotalRecord: true,
     filter: {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.4fr 1fr 1.5fr 1fr 1fr 1fr 1fr .6fr 1fr',
+    tableLayout: '.2fr .4fr 1fr 1.5fr 1fr 1fr 1fr 1fr .6fr 1fr',
   };
   tableColumns: TableColumn[] = [];
 
@@ -46,12 +47,14 @@ export class CustomersComponent {
   statusEnum = Status;
   otherData;
   appRoutes = AppRoutes;
+  customerType = CustomerType;
+  multiSelectedItems = [];
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
     private _httpService: HttpService,
-    public _modalService: NgbModal,
-    public _lookupService: LookupService,
+    private _modalService: NgbModal,
+    private _exportService: ExportService,
   ) {
     this._headerService.setTitle('Customers');
   }
@@ -63,12 +66,14 @@ export class CustomersComponent {
 
   initFilterForm() {
     this.filterForm = this.fb.group({
-      search: [''],
+      customerFullName: [''],
       status: [null],
       country: [null],
       city: [null],
       creationDate: [''],
       lastSeen: [''],
+      customerLevelID: [null],
+      businessCategoryID: [null],
       online: [null],
     });
     this.filterForm.valueChanges.pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$)).subscribe((data) => {
@@ -100,17 +105,83 @@ export class CustomersComponent {
     const business$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=17&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const city$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=3&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const status$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=1&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    forkJoin([country$, business$, city$, status$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
+    const type$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=26&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
+    forkJoin([country$, business$, city$, status$, type$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
       this.countryList = response[0].data;
       this.businessTypeList = response[1].data;
       this.cityList = response[2].data;
       this.tempCityList = [...this.cityList]
       this.statusList = response[3].data.filter(x => x.lookupID == Status.Active || x.lookupID == Status.InActive);
+      this.customerTypeList = response[4].data;
       this.getDataList();
     })
   }
+  handleCountryChange(event) {
+    this.filterForm.get('city').setValue(null);
+    if (event)
+      this.cityList = this.tempCityList.filter(x => x.lookupParent == event.lookupID);
+    else
+      this.cityList = this.tempCityList;
+  }
+  handleExportCustomerClick() {
+    this._exportService.exportCustomers(this.dataList);
+  }
+  handleMultiSelect(event) {
+    this.multiSelectedItems = event.selectedItems;
+  }
+  handleMultiActionClick(from) {
+    if (from == 'block') {
+      this.confirmBlock();
+    }
+    else {
+      this.handSendNotificationClick();
+    }
+  }
+  confirmBlock() {
+    const modalRef = this._modalService.open(ConfirmModalComponent);
+    modalRef.componentInstance.data = {
+      headingText: 'Confirm Block',
+      body: 'Are you sure you want to block the customers?',
+      confirmText: 'Yes',
+      hideIcon: true,
+    }
+    modalRef.componentInstance.eventData.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        if (response) {
+          this.blockCustomers();
+        }
+      }
+    });
+  }
+  blockCustomers() {
+    this._httpService._spinnerService.show();
+    let customerIds = this.multiSelectedItems.map(x => x.customerID);
+    const formData = new FormData();
+    formData.append('customerIDs', customerIds.toString());
+    this._httpService.post(`${this._httpService.apiUrl.Customers.BlockCustomers}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
+      next: response => {
+        if (response.isSuccess) {
+          this.responseModal('success', 'Data updated successfully!');
+          this.otherData = { ...this.otherData, clearSelectedRow: true }
+          this.pageNo = 1;
+          this.getDataList();
+        }
+      },
+      error: err => {
+        this.responseModal('error', err[0].errorMessageEn || err[0].ErrorMessageEn || err?.info);
+      }
+    }).add(() => { this._httpService._spinnerService.hide() })
+  }
   handSendNotificationClick() {
     const modalRef = this._modalService.open(SendCustomerNotificaionModalComponent);
+    let customerIds = this.multiSelectedItems.map(x => x.customerID);
+    modalRef.componentInstance.data = { customerIds };
+    modalRef.componentInstance.eventData.subscribe(x => {
+      if (x) {
+        modalRef.dismiss();
+        this.otherData = { ...this.otherData, clearSelectedRow: true }
+      }
+    });
   }
   handleAddClick(row?) {
     const modalRef = this._modalService.open(AddCustomerComponent, { size: 'xl' });
@@ -143,27 +214,29 @@ export class CustomersComponent {
   confirmDelete(row) {
     const modalRef = this._modalService.open(ConfirmModalComponent);
     modalRef.componentInstance.data = {
-      headingText: 'Delete Customer',
-      body: 'Are you sure you want to delete this customer?',
-      confirmText: 'Delete',
+      headingText: 'Update Status',
+      body: 'Are you sure you want to update the customer status?',
+      confirmText: 'Update',
+      hideIcon: true,
     }
     modalRef.componentInstance.eventData.pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         if (response) {
-          this.deleteRow(row);
+          this.updateStatus(row);
         }
       }
     });
   }
-  deleteRow(row) {
-    return;
+  updateStatus(row) {
     this._httpService._spinnerService.show();
+    let status = row?.status?.lookupID == Status.Active ? Status.InActive : Status.Active;
     const formData = new FormData();
-    formData.append('highlightID', row?.highlightID);
-    this._httpService.post(`${this._httpService.apiUrl.Customers.AddCustomer}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
+    formData.append('status', status.toString());
+    formData.append('customerID', row?.customerID);
+    this._httpService.post(`${this._httpService.apiUrl.Customers.UpdateCustomerProfile}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
       next: response => {
         if (response.isSuccess) {
-          this.responseModal('success', 'Data deleted successfully!');
+          this.responseModal('success', 'Data updated successfully!');
           this.pageNo = 1;
           this.getDataList();
         }
@@ -229,18 +302,16 @@ export class CustomersComponent {
   }
   initTableColumns() {
     this.tableColumns = [
-      { key: 'customerID', label: 'ID' },
-      { key: 'customerName', label: 'Name' },
+      { key: 'customerID', label: 'ID #' },
+      { key: 'customerName', label: 'Full Name' },
       { key: 'customerPhone', label: 'Phone' },
-      { key: 'customerEmail', label: 'Type' },
+      { key: 'customerLevel.lookupNameEN.lookupName', label: 'Type' },
       { key: 'businessCategory.lookupNameEN.lookupName', label: 'Business' },
       { key: 'customerCountry.lookupNameEN.lookupName', label: 'Country' },
       { key: 'customerCity.lookupNameEN.lookupName', label: 'City' },
       { key: 'status', label: 'Status' },
       { key: 'action', label: '' },
     ];
-  }
-  handleMultiSelect(event) {
   }
   ngOnDestroy() {
     this.destroy$.next();

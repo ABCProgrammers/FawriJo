@@ -37,11 +37,8 @@ export class UsersComponent {
   tableColumns: TableColumn[] = [];
   dataList = [];
   statusList = [];
-  rolesList = [];
   userTypeList = [];
   filterParams;
-  otherData;
-  showFilter = false;
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
@@ -61,7 +58,6 @@ export class UsersComponent {
   initFilterForm() {
     this.filterForm = this.fb.group({
       search: [''],
-      role: [null],
       userType: [null],
       status: [null],
     });
@@ -82,9 +78,6 @@ export class UsersComponent {
 
     }).add(() => this._httpService._spinnerService.hide());
   }
-  toggleFilters() {
-    this.showFilter = !this.showFilter;
-  }
   resetFilterForm() {
     this.pageNo = 1;
     this.filterForm.reset(null, { emitEvent: false });
@@ -100,9 +93,7 @@ export class UsersComponent {
   getDataList(params?) {
     let APIURL = `${this._httpService.apiUrl.User.GetUsers}?`;
     let defaultParams = `&pageSize=${this.tableConfig.filter.PageSize}&pageNo=${this.pageNo - 1}&sort=${this.tableConfig.filter.Sort}`;
-    let url;
-    if (params) url = `${APIURL}${params}${defaultParams}`;
-    else url = `${APIURL}${defaultParams}`;
+    let url = params && `${APIURL}${params}${defaultParams}` || `${APIURL}${defaultParams}`;
     this._httpService._spinnerService.show();
     this._httpService.get(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
@@ -161,14 +152,8 @@ export class UsersComponent {
     modalRef.componentInstance.type = type;
     modalRef.componentInstance.message = message;
   }
-  resetForm() {
-    this.filterForm.reset();
-  }
   resetControlValue(control) {
     this.filterForm.get(control).setValue('');
-  }
-  clearSelectedRow() {
-    this.otherData = { ...this.otherData, clearSelectedRow: true }
   }
   onPageChange(page: number) {
     this.pageNo = page;
@@ -221,8 +206,6 @@ export class UsersComponent {
       { key: 'status', label: 'Status', canSort: true, },
       { key: 'action', label: 'Action' },
     ];
-  }
-  handleMultiSelect(event) {
   }
   ngOnDestroy() {
     this.destroy$.next();

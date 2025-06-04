@@ -1,0 +1,23 @@
+@import '../../../../../assets/scss/_variables.scss';
+
+:host {
+  ::ng-deep {
+    .ngb-tp-input {
+      background-color: $white;
+      height: 44px;
+      border: 1px solid $border-color;
+    }
+
+    .ngb-tp-meridian {
+      .btn-outline-primary {
+        border: 1px solid $primary;
+        color: $primary;
+
+        &:hover {
+          background-color: $primary;
+          color: $white;
+        }
+      }
+    }
+  }
+}

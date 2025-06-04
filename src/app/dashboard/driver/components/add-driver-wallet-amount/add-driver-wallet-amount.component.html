@@ -6,18 +6,11 @@
   <form [formGroup]="f">
     <div class="row">
       <div class="col-6 mb-3">
-        <label class="input-label asterik">Dirver Name</label>
-        <ng-select [items]="driversList"
-                   formControlName="lookup"
-                   placeholder="Dirver Name"
-                   bindLabel="lookupNameEN"
-                   bindValue="lookupID"
-                   class="input-dropdown">
-        </ng-select>
-        <validation-error [control]="f.get('lookup')" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <label class="input-label">Dirver Name</label>
+        <input type="text" formControlName="driver" class="form-control input-control" placeholder="Driver Name" />
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label asterik">Driver Mobile</label>
+        <label class="input-label">Driver Mobile</label>
         <ng-container *ngIf="onlyCountries.length">
           <ngx-intl-tel-input [enableAutoCountrySelect]="true"
                               [onlyCountries]="onlyCountries"
@@ -28,30 +21,16 @@
                               [phoneValidation]="true"
                               [separateDialCode]="separateDialCode"
                               [numberFormat]="PhoneNumberFormat.National"
-                              formControlName="name">
+                              formControlName="driverMobile">
           </ngx-intl-tel-input>
-          <ng-container *ngIf="f.get('name')?.invalid && f.get('name')?.touched">
-            <span *ngIf="f.get('name')?.errors?.['required']" class="validation-error d-block">Input is required</span>
-            <ng-container *ngIf="!f.get('name')?.errors?.['required']">
-              <span *ngIf="!f.get('name')?.errors?.['validatePhoneNumber']?.valid" class="validation-error d-block">Invalid phone number</span>
-            </ng-container>
-          </ng-container>
         </ng-container>
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label asterik">Transaction Done By</label>
-        <ng-select [items]="usersList"
-                   formControlName="lookup"
-                   placeholder="Transaction Done By"
-                   bindLabel="lookupNameEN"
-                   bindValue="lookupID"
-                   class="input-dropdown">
-        </ng-select>
-        <validation-error [control]="f.get('lookup')" [errorMessages]="{required:'Input is required'}"></validation-error>
-
+        <label class="input-label">Transaction Done By</label>
+        <input type="text" formControlName="transactionBy" class="form-control input-control" placeholder="Transaction By" />
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label asterik">Transaction Mobile</label>
+        <label class="input-label">Transaction Mobile</label>
         <ng-container *ngIf="onlyCountries.length">
           <ngx-intl-tel-input [enableAutoCountrySelect]="true"
                               [onlyCountries]="onlyCountries"
@@ -62,52 +41,27 @@
                               [phoneValidation]="true"
                               [separateDialCode]="separateDialCode"
                               [numberFormat]="PhoneNumberFormat.National"
-                              formControlName="name">
+                              formControlName="transactionMobile">
           </ngx-intl-tel-input>
-          <ng-container *ngIf="f.get('name')?.invalid && f.get('name')?.touched">
-            <span *ngIf="f.get('name')?.errors?.['required']" class="validation-error d-block">Input is required</span>
-            <ng-container *ngIf="!f.get('name')?.errors?.['required']">
-              <span *ngIf="!f.get('name')?.errors?.['validatePhoneNumber']?.valid" class="validation-error d-block">Invalid phone number</span>
-            </ng-container>
-          </ng-container>
         </ng-container>
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label asterik">Transaction Amount</label>
-        <input type="text" formControlName="name" class="form-control input-control" placeholder="Transaction Amount" />
-        <validation-error [control]="f.get('name')" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <label class="input-label">Transaction Amount</label>
+        <input type="text" formControlName="amount" class="form-control input-control" placeholder="Transaction Amount" />
       </div>
       <!--Attachment-->
       <div class="col-6 mb-3">
         <label class="input-label">Attachment</label>
-        <div class="row">
-          <div class="col-6">
-            <div class="upload-file-container" (click)="attachmentInput.click()">
-              <div class="flex-center">
-                <p class="font-14"><i class="fas fa-cloud-arrow-up me-1"></i> Upload</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-6">
-            <ng-cotaniner *ngIf="uploadAttachment?.file">
-              <view-file [customClass]="'mb-2'" remove="true" [data]="{isUploaded:true,uploadedFile:uploadAttachment}" (removeFile)="removeFileHandle($event,attachmentInput)"></view-file>
-            </ng-cotaniner>
-            <ng-cotaniner *ngIf="attachment">
-              <view-file [file]="attachment"></view-file>
-            </ng-cotaniner>
-          </div>
-        </div>
-        <input type="file" #attachmentInput accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event)" hidden />
+        @if(attachment){
+        <view-file [file]="attachment"></view-file>
+        }
+        @else{
+        <span class="d-block">---</span>
+        }
       </div>
       <div class="col-6 mb-3">
         <label class="input-label">Status</label>
-        <ng-select [items]="statusList"
-                   formControlName="lookup"
-                   placeholder="Status"
-                   bindLabel="lookupNameEN"
-                   bindValue="lookupID"
-                   class="input-dropdown">
-        </ng-select>
+        <input type="text" formControlName="status" class="form-control input-control" placeholder="Status" />
       </div>
     </div>
   </form>
@@ -115,6 +69,6 @@
 <div class="modal-footer border-top-0">
   <div class="d-flex justify-content-end gap-2">
     <button type="button" class="btn btn-outline-dark" (click)="_activeModal.close()">Cancel</button>
-    <button type="button" class="btn btn-primary" [disabled]="f.disabled" (click)="handleConfirmClick()">Add to Driver Wallet</button>
+    <button type="button" class="btn btn-primary" (click)="handleConfirmClick()">Add to Driver Wallet</button>
   </div>
 </div>

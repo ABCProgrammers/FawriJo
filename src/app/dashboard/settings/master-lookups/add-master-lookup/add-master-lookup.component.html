@@ -1,15 +1,77 @@
 <div class="modal-header align-items-center justify-content-between">
-  <h4 class="modal-title">{{(!data?.edit) && 'Add Master Lookup' || 'Edit Master Lookup'}}</h4>
-  <i *ngIf="data?.edit" (click)="toggleEdit()" class="fas font-22 success-clr cursor-pointer" [ngClass]="f.disabled && 'fa-pencil' || 'fa-pen-to-square'"></i>
+  <h4 class="modal-title">{{(!data?.edit) && 'Add Lookup' || (!data?.view) && ('Edit Lookup') || ('Lookup Details')}}</h4>
+  <i *ngIf="data?.isEdit" (click)="toggleEdit()" class="fas font-22 green-clr cursor-pointer" [ngClass]="f.disabled && 'fa-pencil' || 'fa-pen-to-square'"></i>
 </div>
-<div class="modal-body" ngbAutoFocus>
-  <!--{{f.value | json}}-->
+<!--{{langArray.value | json}}-->
+<div class="modal-body">
+  <div class="language-wrapper d-flex mb-4">
+    <div class="item flex-grow-1 flex-shrink-1" *ngFor="let item of languageList"
+         (click)="handleLanguageTabClick(item)" [class.active]="activeTab == item?.lookupID">
+      <p>{{item?.lookupNameEN}}</p>
+    </div>
+  </div>
   <form [formGroup]="formGroup">
-    <div class="row">
-      <div class="col-4 mb-3">
-        <label class="input-label">Lookup Type *</label>
-        <ng-select [searchable]="true"
-                   placeholder="Select Type"
+    <ng-container formArrayName="languageArray">
+      <ng-container *ngFor="let langControl of langArray.controls; let index=index" [formGroupName]="index">
+        <ng-container *ngIf="langControl.get('languageId').value == activeTab">
+          <div class="row mb-3">
+            <div class="col-6">
+              <label class="input-label asterik">Lookup Name</label>
+              <input type="text" formControlName="lookupName" class="form-control input-control" placeholder="Lookup Type Name">
+              <validation-error [control]="langControl.get('lookupName')" [errorMessages]="{required:'Input is required'}"></validation-error>
+            </div>
+            <div class="col-6">
+              <label class="input-label">Lookup System</label>
+              <input type="text" formControlName="lookupSystem" placeholder="Lookup System" class="form-control input-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6">
+              <label class="input-label">Lookup Description</label>
+              <input type="text" formControlName="lookupDesc" placeholder="Lookup Description" class="form-control input-control">
+            </div>
+            <div class="col-6">
+              <label class="input-label">Image</label>
+              <div class="row">
+                <div class="col-6">
+                  <div class="upload-file-container mb-2" (click)="inputFile.click()" [class.disable-elm]="data?.view">
+                    <div class="d-flex align-items-center justify-content-center ">
+                      <p class="font-14"><i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload Image</p>
+                    </div>
+                  </div>
+                  <input type="file" [id]="activeTab" class="form-control" #inputFile accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,index)" hidden />
+                </div>
+                <div class="col-6">
+                  <!--IN CASE OFF ADDING FILES-->
+                  <ng-container *ngFor="let item of filesObj[activeTab];let index=index">
+                    <view-file remove="true" [data]="{isUploaded:true,uploadedFile:item}" (removeFile)="removeFileHandle($event,index,activeTab)"></view-file>
+                  </ng-container>
+                </div>
+                <!--PREVIOUS UPLOADED FILES-->
+                <div class="col-12" *ngIf="data?.edit && lookupImages[activeTab]">
+                  <label class="input-label">Previous Attachment</label>
+                  <view-file [file]="lookupImages[activeTab]" [download]="true"></view-file>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-12">
+              <label class="input-label">Comments</label>
+              <input type="text" formControlName="lookupComments" placeholder="Comments" class="form-control input-control">
+            </div>
+            <div class="col-12 mt-4">
+              <div class="hr-line"></div>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <div class="row mb-3">
+      <div class="col-3">
+        <label class="input-label asterik">Lookup Type</label>
+        <ng-select placeholder="Select Type"
+                   appendTo="body"
                    [items]="lookupTypeList"
                    bindLabel="lookupTypeName"
                    bindValue="lookupTypeID"
@@ -19,85 +81,70 @@
         <validation-error [control]="f.get('lookupTypeID')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
 
-      <div class="col-4 mb-3">
-        <label class="input-label">Lookup Name *</label>
-        <div class="forms-input">
-          <input type="text" formControlName="lookupName" class="form-control input-control" placeholder="Lookup Type Name">
-        </div>
-        <validation-error [control]="f.get('lookupName')" [errorMessages]="{required:'Input is required'}"></validation-error>
-      </div>
-      <div class="col-4 mb-3">
+      <div class="col-3">
         <label class="input-label">Lookup Value</label>
-        <div class="forms-input">
-          <input type="number" formControlName="lookupValue" placeholder="Lookup Value" class="form-control input-control">
-        </div>
-      </div>
-      <div class="col-4 mb-3">
-        <label class="input-label">Lookup System</label>
-        <div class="forms-input">
-          <input type="text" formControlName="lookupSystem" placeholder="Lookup System" class="form-control input-control">
-        </div>
-      </div>
-      <div class="col-8 mb-3">
-        <label class="input-label">Lookup Description</label>
-        <div class="forms-input">
-          <input type="text" formControlName="lookupDesc" placeholder="Lookup Description" class="form-control input-control">
-        </div>
+        <input type="number" formControlName="lookupValue" placeholder="Lookup Value" class="form-control input-control">
       </div>
 
-      <div class="col-4 mb-3">
+      <div class="col-3">
         <label class="input-label">Static</label>
         <ng-select placeholder="Static"
                    [items]="booleanOptions"
-                   bindLabel="text"
+                   bindLabel="label"
                    bindValue="value"
                    formControlName="lookupStatic"
                    class="input-dropdown">
         </ng-select>
       </div>
-      <div class="col-4 mb-3">
+      <div class="col-3">
         <label class="input-label">Default</label>
         <ng-select placeholder="Default"
                    [items]="booleanOptions"
-                   bindLabel="text"
+                   bindLabel="label"
                    bindValue="value"
                    formControlName="lookupDefault"
                    class="input-dropdown">
         </ng-select>
       </div>
-
-      <div class="col-4 mb-3">
-        <label class="input-label" for="active">Status</label>
-        <div class="form-check form-switch">
-          <input class="form-check-input custom-switch" type="checkbox" id="active" formControlName="status" />
+    </div>
+    <div class="row mb-3">
+      <div class="col-6">
+        <div class="row">
+          <div class="col-6">
+            <label class="input-label">Sort</label>
+            <input type="number" formControlName="lookupSort" class="form-control input-control" placeholder="Sort">
+          </div>
+          <div class="col-3 align-self-end">
+            <div class="form-check form-switch">
+              <label class="form-check-label" for="isActive">Active</label>
+              <input class="form-check-input" type="checkbox" formControlName="status" id="isActive" />
+            </div>
+          </div>
+          <div class="col-3 align-self-end">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="hasParent" formControlName="hasParent" (change)="handleHasParentChange($event)">
+              <label class="form-check-label" for="hasParent">
+                Has Parent
+              </label>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-4 mb-3 d-flex justify-content-start align-items-center">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="hasParent" formControlName="hasParent" (change)="onHasParent($event)">
-          <label class="form-check-label" for="hasParent">
-            Has Parent
-          </label>
-        </div>
-      </div>
-
-      <div class="col-4 mb-3">
+      <div class="col-3">
         <label class="input-label">Parent Lookup Type</label>
-        <ng-select [searchable]="true"
-                   placeholder="Select Parent Lookup Type"
+        <ng-select placeholder="Select Parent Lookup Type"
                    [items]="lookupTypeList"
                    bindLabel="lookupTypeName"
                    bindValue="lookupTypeID"
                    formControlName="lookupParentType"
                    class="input-dropdown"
-                   (change)="parentLookupTypeChange($event)">
+                   (change)="handleParentTypeChange($event)">
         </ng-select>
       </div>
-
-      <div class="col-4 mb-3">
+      <div class="col-3">
         <label class="input-label">Parent</label>
-        <ng-select [searchable]="true"
-                   placeholder="Select Parent"
+        <ng-select placeholder="Select Parent"
+                   appendTo="body"
                    [items]="tempLookupList"
                    bindLabel="lookupNameEN"
                    bindValue="lookupID"
@@ -105,23 +152,18 @@
                    class="input-dropdown">
         </ng-select>
       </div>
-
-      <div class="col-4 mb-3">
+    </div>
+    <div class="row mb-3">
+      <div class="col-3">
         <label class="input-label">Action</label>
-        <div class="forms-input">
-          <input type="number" formControlName="lookupAction" class="form-control input-control" placeholder="Action">
-        </div>
-        <validation-error [control]="f.get('lookupAction')" [errorMessages]="{pattern:'Please enter whole number values.'}"></validation-error>
+        <input type="number" formControlName="lookupAction" class="form-control input-control" placeholder="Action">
       </div>
-      <div class="col-4 mb-3">
+      <div class="col-3">
         <label class="input-label">Integration</label>
-        <div class="forms-input">
-          <input type="number" formControlName="lookupIntegration" placeholder="Integration" class="form-control input-control">
-        </div>
-        <validation-error [control]="f.get('lookupIntegration')" [errorMessages]="{pattern:'Please enter whole number values.'}"></validation-error>
+        <input type="number" formControlName="lookupIntegration" placeholder="Integration" class="form-control input-control">
       </div>
 
-      <div class="col-4 mb-3">
+      <div class="col-3">
         <label class="input-label">Text Color</label>
         <div class="input-group">
           <span class="input-group-text px-4" [ngStyle]="{'background-color':f.get('lookupTextColor').value}"></span>
@@ -129,7 +171,7 @@
         </div>
         <validation-error [control]="f.get('lookupTextColor')" [errorMessages]="{pattern:'Invalid hex code'}"></validation-error>
       </div>
-      <div class="col-4 mb-3">
+      <div class="col-3">
         <label class="input-label">Background Color</label>
         <div class="input-group">
           <span class="input-group-text px-4" [ngStyle]="{'background-color':f.get('lookupBGColor').value}"></span>
@@ -137,36 +179,19 @@
         </div>
         <validation-error [control]="f.get('lookupBGColor')" [errorMessages]="{pattern:'Invalid hexa code'}"></validation-error>
       </div>
-      <div class="col-4 mb-3">
-        <label class="input-label">Image</label>
-        <div class="upload-file-container  mb-2" (click)="inputFile.click()" [class.disable-elm]="f.disabled">
-          <span class="font-14">Upload Image</span>
-        </div>
-        <input type="file" id="image" #inputFile accept=".png,.jpg,.jpeg" (change)="onFileChange($event)" multiple hidden />
-        <!--IN CASE OFF ADDING FILES-->
-        <ng-container *ngFor="let item of files;let index=index">
-          <view-file remove="true" [data]="{isUploaded:true,uploadedFile:item}" (removeFile)="removeFileHandle($event,index)"></view-file>
-        </ng-container>
-        <!--IN CASE OFF EDIT FILES-->
-        <ng-container *ngIf="data?.edit && lookupImages?.length">
-          <p class="font-16 fw-500 mt-3">Previous Attachments</p>
-          <ng-container *ngFor="let item of lookupImages;let index=index">
-            <view-file [file]="item" [download]="true"></view-file>
-          </ng-container>
-        </ng-container>
-      </div>
-
-      <div class="col-12 mb-3">
-        <label class="input-label">Comments</label>
-        <input type="text" formControlName="lookupComments" placeholder="Comments" class="form-control input-control">
-      </div>
     </div>
   </form>
 </div>
-<div class="modal-footer border-0 mt-3 gap-2">
-  <button class="btn btn-outline-dark" type="button" (click)="_activeModal.close()">Cancel</button>
-  <button class="btn btn-primary" type="button" (click)="save()" [disabled]="f.disabled">
-    <i class="fas font-18 me-2" [ngClass]="!data?.edit && 'fa-circle-plus' || 'fa-save'"></i>
-    {{(!data?.edit) && 'Add Master Lookup' || 'Save Master Lookup'}}
-  </button>
+<div class="modal-footer border-top-0">
+  <div class="d-flex flex-column align-items-end gap-2">
+    <ng-continer *ngIf="langArray?.invalid && langArray.touched">
+      <span class="validation-error">Some required fields are missing in the language tabs.</span>
+    </ng-continer>
+    <div class="d-flex gap-2">
+      <button ngbAutoFocus type="button" class="btn btn-outline-dark" (click)="_activeModal.close()">Cancel</button>
+      @if(!data?.view){
+      <button type="button" class="btn btn-primary" (click)="saveData()">{{data?.edit && 'Edit Lookup' || 'Add Lookup'}}</button>
+      }
+    </div>
+  </div>
 </div>

@@ -4,7 +4,7 @@
   <i class="fas fa-times cursor-pointer font-20 cbs-clr" (click)="_activeModal.close()"></i>
 </div>
 <!--{{f.value | json}}-->
-<div class="modal-body">
+<div class="modal-body" ngbAutoFocus>
   <form [formGroup]="formGroup">
     <div class="row">
       <div class="col-12 d-flex align-items-center justify-content-end mt-3">
@@ -15,7 +15,7 @@
       </div>
       <div class="col-6">
         <label class="input-label asterik">User No</label>
-        <input type="text" ngbAutoFocus
+        <input type="text"
                formControlName="userNo"
                class="form-control input-control"
                placeholder="User No" />
@@ -73,7 +73,7 @@
         <div class="d-flex gap-2 mt-2">
           <div class="form-check" *ngFor="let item of genderList">
             <input class="form-check-input" type="radio" [id]="item?.lookupID" [value]="item?.lookupID" formControlName="userGender">
-            <label class="form-check-label" [attr.for]="item?.lookupID">{{item?.lookupName}}</label>
+            <label class="form-check-label" [attr.for]="item?.lookupID">{{item?.lookupNameEN}}</label>
           </div>
         </div>
       </div>
@@ -111,6 +111,7 @@
                formControlName="userEmail"
                class="form-control input-control"
                placeholder="Email" />
+        <validation-error [control]="f.get('userEmail')" [errorMessages]="{email:'Invalid email'}"></validation-error>
       </div>
     </div>
     <div class="row mt-3">

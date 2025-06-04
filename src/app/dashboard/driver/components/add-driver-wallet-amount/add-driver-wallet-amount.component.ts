@@ -44,14 +44,24 @@ export class AddDriverWalletAmountComponent {
   }
   initForm() {
     this.formGroup = this.fb.group({
-      name: ['', Validators.required],
-      lookup: [null],
+      driver: [''],
+      driverMobile: [''],
+      transactionBy: [''],
+      transactionMobile: [''],
+      amount: [''],
+      status: [''],
     });
-    if (this.data?.edit) {
-      let row = this.data.row;
-      //this.f.patchValue(row);
-      //this.f.disable();
+    const data = this.data.row;
+    let obj = {
+      driver: data?.driverCustomerID[0]?.fullName,
+      driverMobile: data?.driverCustomerID[0]?.customerPhone,
+      transactionBy: data?.transactionFullName,
+      transactionMobile: data?.transactionMobile,
+      amount: data?.transactionAmount,
+      status: data?.status?.lookupNameEN?.lookupName,
     }
+    this.formGroup.patchValue(obj);
+    this.formGroup.disable();
   }
   getLookups() {
     this._httpService._spinnerService.show();
@@ -73,19 +83,13 @@ export class AddDriverWalletAmountComponent {
       });
     }).add(() => { this._httpService._spinnerService.hide() })
   }
-
-  bindFormData() {
-    if (this.data?.edit) {
-      const dataRow = this.data?.row;
-    }
-  }
   handleConfirmClick() {
     const modalRef = this._modalService.open(ConfirmModalComponent);
     modalRef.componentInstance.data = {
       headingText: 'Add Amount',
-      body: 'Are you sure you want to add this amount (129 JOD) to driver wallet?',
-      confirmText: 'Add Amount',
-      hideIcon:true,
+      body: `Are you sure you want to add this amount (${this.data?.row?.transactionAmount.toFixed(3)} JOD) to driver wallet?`,
+      confirmText: 'Add Amount To Driver Wallet',
+      hideIcon: true,
     }
     modalRef.componentInstance.eventData.pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
@@ -96,28 +100,16 @@ export class AddDriverWalletAmountComponent {
     });
   }
   saveData() {
-    if (this.f.invalid) {
-      this.f.markAllAsTouched();
-      return;
-    }
-    return;
-    const value = this.f.value;
     this._httpService._spinnerService.show();
-    let controls = ['customerPhone', 'customerDOB', 'status', 'confirmPassword'];
-    const formData = this._httpService._helperService.convertFormGroupToFormData(this.f, controls);
-    formData.append('customerDOB', (this._httpService._helperService.dateFormate(value?.customerDOB)) || '');
-    formData.append('customerPhone', value.customerPhone.e164Number);
-    formData.append('status', value.status && '1001' || '1002');
-    let URL = this._httpService.apiUrl.Customers.AddCustomer;
-    if (this.data?.edit) {
-      URL = this._httpService.apiUrl.Customers.AddCustomer;
-      formData.append('highlightID', this.data?.row?.highlightID);
-    }
+    const formData = new FormData();
+    formData.append('driverCustomerID', this.data?.row?.driverCustomerID[0]?.customerID);
+    formData.append('driverChargeAccountID', this.data?.row?.driverChargeAccountID);
+    let URL = this._httpService.apiUrl.Wallet.AddMoneyToDriverWallet;
     this._httpService.post(`${URL}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
       next: response => {
         if (response.isSuccess) {
-          this.eventData.emit({ highlightSaved: true });
-          this.responseModal('success', 'Data saved successfully!')
+          this.eventData.emit(true);
+          this.responseModal('success', 'Data saved successfully!');
         }
       },
       error: err => {

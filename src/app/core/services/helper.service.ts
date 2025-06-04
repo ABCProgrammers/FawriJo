@@ -113,4 +113,8 @@ export class HelperService {
   redirectToLastURL() {
     this._location.back();
   }
+  appendDateWithTime(time: any, date?: string): string {
+    if (!date) return `1970-01-01T${time}`;
+    else return `${date}T${time}`
+  }
 }

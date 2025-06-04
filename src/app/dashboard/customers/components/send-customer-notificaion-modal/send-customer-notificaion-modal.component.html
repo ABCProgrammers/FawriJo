@@ -2,37 +2,46 @@
   <h6 class="font-20 fw-600">Send Notification</h6>
   <i class="fas fa-times cursor-pointer font-20 cbs-clr" (click)="_activeModal.close()"></i>
 </div>
+<!--{{formGroup.value | json}}-->
 <div class="modal-body" ngbAutoFocus>
   <form [formGroup]="formGroup">
     <div class="row">
       <div class="col-12 mb-3">
         <label class="input-label asterik">Notification Title</label>
-        <input type="text" formControlName="title" class="form-control input-control" placeholder="Notification Title" />
-        <validation-error [control]="formGroup.get('title')" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <input type="text" formControlName="notificationTitle" class="form-control input-control" placeholder="Notification Title" />
+        <validation-error [control]="formGroup.get('notificationTitle')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <div class="col-12 mb-3">
         <label class="input-label asterik">Notification Body</label>
-        <textarea formControlName="body" class="form-control input-control" style="height:130px" placeholder="Notification Body"></textarea>
-        <validation-error [control]="formGroup.get('body')" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <quill-editor [styles]="{height: '150px'}"
+                      placeholder="Enter text here..."
+                      formControlName="notificationText"
+                      (onNativeBlur)="onQuillContentChanged($event)"
+                      class="d-block">
+        </quill-editor>
+        <validation-error [control]="formGroup.get('notificationText')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <div class="col-12 mb-3">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="sched" formControlName="schedule">
+          <input class="form-check-input" type="checkbox" id="sched" formControlName="schedule" (change)="handleScheduleChange($event)">
           <label class="form-check-label" for="sched">Schedule to send later</label>
         </div>
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label">Send Date</label>
+        <label class="input-label" [class.asterik]="formGroup.get('schedule').value">Send Date</label>
         <input type="text"
                bsDatepicker
-               placement="left"
+               [minDate]="minDate"
+               placement="right"
                class="form-control input-control"
                placeholder="Send Date"
-               formControlName="sendDate" />
+               formControlName="scheduledDate" />
+        <validation-error [control]="formGroup.get('scheduledDate')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label">Send Time</label>
-        <input type="text" class="form-control input-control" placeholder="Send Time" formControlName="sendTime" />
+        <label class="input-label" [class.asterik]="formGroup.get('schedule').value">Send Time</label>
+        <ngb-timepicker formControlName="scheduledTime" [meridian]="true" [spinners]="false" />
+        <validation-error [control]="formGroup.get('scheduledTime')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
     </div>
   </form>
@@ -40,6 +49,6 @@
 <div class="modal-footer border-top-0">
   <div class="d-flex justify-content-end gap-2">
     <button type="button" class="btn btn-outline-dark" (click)="_activeModal.close()">Cancel</button>
-    <button type="button" class="btn btn-primary">Send</button>
+    <button type="button" class="btn btn-primary" (click)="saveData()">Send</button>
   </div>
 </div>

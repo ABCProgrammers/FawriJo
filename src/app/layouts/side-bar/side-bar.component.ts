@@ -76,7 +76,7 @@ export class SideBarComponent {
       },
       {
         id: 5,
-        name: 'Drivers Walletss',
+        name: 'Drivers Wallets',
         iconDark: '/assets/images/left-menu/user-1.svg',
         routeName: AppRoutes.Drivers.Wallets,
         hasSubMenu: false,

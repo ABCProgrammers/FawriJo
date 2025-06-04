@@ -4,6 +4,8 @@ import { forkJoin, debounceTime, distinctUntilChanged, Subject, takeUntil, catch
 import { TableColumn, TableConfig } from '../../../../shared/components/data-table/IDataTable';
 import { HeaderService } from '../../../../core/services/header.service';
 import { HttpService } from '../../../../core/services/http.service';
+import { ActivatedRoute } from '@angular/router';
+import { ExportService } from '../../../../core/services/export.service';
 
 @Component({
   selector: 'app-customer-wallet',
@@ -23,29 +25,39 @@ export class CustomerWalletComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '1fr 1fr 1fr 1fr .4fr',
+    tableLayout: '1fr 1fr 1fr 1fr 1fr .4fr',
   };
   tableColumns: TableColumn[] = [];
 
   dataList = [];
   transactionTypeList = [];
   filterParams;
+  driverId = 0;
+  totalAmount = 0;
+  driverName = '';
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
     private _httpService: HttpService,
+    private _activeRoute: ActivatedRoute,
+    private _exportService: ExportService,
+
   ) {
     this._headerService.setTitle('Customer Wallet');
   }
   ngOnInit() {
     this.initTableColumns();
+    this._activeRoute.queryParams.subscribe(params => {
+      this.driverId = +params['id'];
+      this.getDataList();
+    })
     this.initFilterForm();
     this.getLookups();
   }
 
   initFilterForm() {
     this.filterForm = this.fb.group({
-      type: [null],
+      transactionType: [null],
       creationDate: [''],
     });
     this.filterForm.valueChanges.pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$)).subscribe((data) => {
@@ -54,32 +66,41 @@ export class CustomerWalletComponent {
       if (formValues?.creationDate) {
         formValues = {
           ...formValues,
-          dateOfRegisterationFrom: this._httpService._helperService.dateFormate(formValues?.creationDate[0]),
-          dateOfRegisterationTo: this._httpService._helperService.dateFormate(formValues?.creationDate[1]),
+          fromDate: this._httpService._helperService.dateFormate(formValues?.creationDate[0]),
+          toDate: this._httpService._helperService.dateFormate(formValues?.creationDate[1]),
         };
       }
       delete formValues.creationDate;
+      this.filterParams = new URLSearchParams(formValues).toString();
+      this.getDataList(this.filterParams);
     });
   }
   getLookups() {
     this._httpService._spinnerService.show();
-    const transcType$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=2&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
+    const transcType$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=20&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     forkJoin([transcType$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
-      this.transactionTypeList = [];
-      this.getDataList();
+      this.transactionTypeList = response[0].data;
     })
   }
   getDataList(params?) {
     params && this._httpService._spinnerService.show();
-    let APIURL = `${this._httpService.apiUrl.Customers.GetCustomers}?`;
-    let defaultParams = `&pageSize=${this.limit}&pageNo=${this.pageNo - 1}`;
+    let APIURL = `${this._httpService.apiUrl.Wallet.ViewDriverWalletDetails}?`;
+    let defaultParams = `&driverCustomerID=${this.driverId}&pageSize=${this.limit}&pageNo=${this.pageNo - 1}`;
     let url = params && `${APIURL}${params}${defaultParams}` || `${APIURL}${defaultParams}`;
     this._httpService.get(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
-        this.dataList = response.data;
+        this.dataList = response.data.map(x => ({
+          ...x,
+          time: this._httpService._helperService.appendDateWithTime(x?.enterTime),
+        }));
+        this.driverName = this.dataList[0]?.driverCustomerID[0]?.fullName;
+        this.totalAmount = response?.info?.totalAllRecordsCount;
         this.total = response?.info?.totalRecordsCount;
       },
     }).add(() => this._httpService._spinnerService.hide());
+  }
+  handleExportWalletClick() {
+    this._exportService.exportDriverWalletDetails(this.dataList);
   }
   resetFilterForm() {
     this.pageNo = 1;
@@ -101,10 +122,11 @@ export class CustomerWalletComponent {
   }
   initTableColumns() {
     this.tableColumns = [
-      { key: 'customerID', label: 'Wallet Transaction ID #' },
-      { key: 'customerName3', label: 'Transaction Type' },
+      { key: 'walletTransactionID', label: 'Wallet Transaction ID #' },
+      { key: 'dateTime', label: 'Transaction Date' },
+      { key: 'transactionType.lookupNameEN.lookupName', label: 'Transaction Type' },
       { key: 'charge', label: 'Charge Transaction ID #' },
-      { key: 'customerEmail1', label: 'Transaction Amount' },
+      { key: 'transactionAmount', label: 'Transaction Amount', currency: { decimalFormat: '2.3-3', appendText: ' JOD' } },
       { key: 'status', label: 'Status' },
     ];
   }

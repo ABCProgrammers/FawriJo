@@ -1,20 +1,16 @@
-export enum UserType {
-  Company = 25006,
-  SystemAdmin = 25005,
-}
 export enum LanguageEnum {
   Arabic = 40001,
   English = 40002,
 }
+
 export enum MediaTypeEnum{
   Image = 89001,
   LocalVideo = 89003,
   YoutubeVideo = 89002,
 }
-export enum EngagementTypeEnum {
-  Like = 97001,
-  View = 97002,
-  Click = 97003,
+export enum CustomerType {
+  Vendor = 26001,
+  Driver = 26002,
 }
 export enum Status {
   Active = 1001,

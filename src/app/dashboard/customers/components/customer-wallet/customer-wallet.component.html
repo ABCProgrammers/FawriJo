@@ -1,11 +1,11 @@
-<h4 class="font-24 fw-600 mb-3">Ahmad Jamal – Total Amount: <span class="success-clr">129 JOD</span></h4>
+<h4 class="font-24 fw-600 mb-3">{{driverName}} – Current Wallet Active Amount: <span class="success-clr">{{totalAmount | number:'2.3-3'}} JOD</span></h4>
 <form [formGroup]="filterForm">
   <div class="row mb-3">
     <div class="col-4">
       <div class="row">
         <div class="col-5">
           <ng-select [items]="transactionTypeList"
-                     formControlName="type"
+                     formControlName="transactionType"
                      placeholder="Transaction Type"
                      bindLabel="lookupNameEN"
                      bindValue="lookupID"
@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="col-8 justify-content-end gap-2 d-flex">
-      <button type="button" class="btn btn-outline-dark white-bg fw-400">
+      <button type="button" class="btn btn-outline-dark white-bg fw-400" (click)="handleExportWalletClick()">
         <i class="fa-solid fa-download"></i> Export Wallet Report
       </button>
     </div>
@@ -41,8 +41,11 @@
               [total]="total"
               [limit]="limit"
               (pageUpdated)="onPageChange($event)">
+  <ng-template tableDataColumn="dateTime" let-row="row">
+    {{row?.enterDate | date:'mediumDate'}} {{row?.time | date:'shortTime'}}
+  </ng-template>
   <ng-template tableDataColumn="charge" let-row="row">
-    <span class="text-decoration-underline primary-clr cursor-pointer">#1234578</span>
+    <span class="text-decoration-underline primary-clr cursor-pointer">#{{row?.driverChargeAccountID}}</span>
   </ng-template>
   <ng-template tableDataColumn="status" let-row="row">
     <div class="status-tag"

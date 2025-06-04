@@ -8,13 +8,11 @@
     <div ngbDropdown class="d-inline-block" placement="bottom-end">
       <div class="user-info d-flex align-items-center gap-2" ngbDropdownToggle>
         <span>{{userDetails?.fullNameEN}}</span>
+        @if(userDetails?.profileImage){
         <div class="profile-image">
-          @if(userDetails?.profileImage){
-          <img [src]="userDetails?.profileImage"/>
-          }@else{
-          <p class="text-white fw-600">{{getInitials(_tokenService?.getUser?.fullNameEN)}}</p>
-          }
+          <img [src]="userDetails?.profileImage" />
         </div>
+        }
       </div>
       <div ngbDropdownMenu>
         <button ngbDropdownItem type="button" (click)="handleLogoutClick()">Logout</button>

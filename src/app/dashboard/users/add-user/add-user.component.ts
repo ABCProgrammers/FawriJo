@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { catchError, of, forkJoin, takeUntil, Subject } from 'rxjs';
+import { catchError, of, forkJoin, takeUntil, Subject, debounceTime } from 'rxjs';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { HttpService } from '../../../core/services/http.service';
 import { LookupService } from '../../../core/services/lookup.service';
@@ -38,6 +38,22 @@ export class AddUserComponent {
   ngOnInit() {
     this.initForm();
     this.getLookups();
+    this.f.get('fullNameEN').valueChanges.pipe(debounceTime(500), takeUntil(this.destroy$)).subscribe(value => {
+      if (value) {
+        let fullNameArray = value.trim().split(' ');
+        if (fullNameArray.length > 1) {
+          let firstName = fullNameArray[0];
+          let lastName = fullNameArray.pop();
+          this.f.patchValue({ firstName, lastName });
+        }
+        else {
+          this.f.get('firstName').setValue(value);
+          this.f.get('lastName').setValue('');
+        }
+      }
+      else
+        this.f.get('firstName').setValue('');
+    })
   }
   initForm() {
     this.formGroup = this.fb.group({
@@ -50,7 +66,7 @@ export class AddUserComponent {
       userGender: [24001],
       userJobTitle: [''],
       userMobile: ['', Validators.required],
-      userEmail: [''],
+      userEmail: ['', [Validators.email]],
       userType: [null, Validators.required],
       remarks: [''],
       status: [true]

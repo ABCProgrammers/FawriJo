@@ -30,7 +30,7 @@ export class MasterLookupsComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.7fr 1fr 1fr 1fr .80fr .80fr .70fr 1fr 1fr 1fr .8fr',
+    tableLayout: '.5fr 1fr 1fr 1fr .80fr .80fr .70fr 1fr .5fr .7fr .8fr',
   };
   tableColumns: TableColumn[] = [];
   lookupList = [];
@@ -230,16 +230,16 @@ export class MasterLookupsComponent {
   initTableColumns() {
     this.tableColumns = [
       { key: 'lookupID', label: 'ID', canSort: true, },
-      { key: 'lookupName', label: 'Lookup Name', canSort: true, },
+      { key: 'lookupNameEN', label: 'Lookup Name', canSort: true, },
       { key: 'lookupType.lookupTypeName', label: 'Lookup Type', canSort: true, },
       { key: 'lookupValue', label: 'Lookup Value', canSort: true, },
       { key: 'lookStatic', label: 'Static', canSort: true, },
       { key: 'lookupDefault', label: 'Default', canSort: true },
       { key: 'lookupSort', label: 'Sort', },
-      { key: 'lookupParentObj.lookupName', label: 'Parent', canSort: true, },
+      { key: 'lookupParentObj.lookupNameEN', label: 'Parent', canSort: true, },
       { key: 'image', label: 'Image', },
       { key: 'status', label: 'Status', canSort: true, },
-      { key: 'action', label: 'Action' },
+      { key: 'action', label: 'Action' }, 
     ];
   }
   ngOnDestroy() {

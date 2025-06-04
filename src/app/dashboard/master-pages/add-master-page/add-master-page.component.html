@@ -28,7 +28,9 @@
         <div class="row">
           <!--UPPER IMAGE-->
           <div class="col-6">
+            @if(edit || !masterPageId || (view && upperFile)){
             <label class="input-label">Page Upper Image</label>
+            }
             <div *ngIf="!view" class="upload-file-container mt-2" (click)="inputFile.click()">
               <div class="flex-center">
                 <p class="font-14"><i class="fas fa-cloud-arrow-up me-1"></i> Upload</p>
@@ -49,7 +51,9 @@
           </div>
           <!--LOWER IMAGE-->
           <div class="col-6">
+            @if(edit || !masterPageId || (view && upperFile)){
             <label class="input-label">Page Lower Image</label>
+            }
             <div *ngIf="!view" class="upload-file-container mt-2" (click)="inputFileLower.click()">
               <div class="flex-center">
                 <p class="font-14"><i class="fas fa-cloud-arrow-up me-1"></i> Upload</p>

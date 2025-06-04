@@ -3,11 +3,11 @@
     <div class="col-4">
       <div class="row">
         <div class="col-6">
-          <ng-select [items]="transactionTypeList"
-                     formControlName="type"
+          <ng-select [items]="driversList"
+                     formControlName="driverCustomerID"
                      placeholder="Driver Name"
-                     bindLabel="lookupNameEN"
-                     bindValue="lookupID"
+                     bindLabel="fullName"
+                     bindValue="customerID"
                      class="ng-select-filter">
           </ng-select>
         </div>
@@ -26,7 +26,7 @@
       <button type="button" (click)="toggleFilters()" class="btn btn-outline-dark white-bg">
         <i class="fa-solid fa-sliders"></i> Filter
       </button>
-      <button type="button" class="btn btn-outline-dark white-bg fw-400">
+      <button type="button" class="btn btn-outline-dark white-bg fw-400" (click)="handleExportWalletClick()">
         <i class="fa-solid fa-download"></i> Export Wallet Report
       </button>
     </div>
@@ -63,13 +63,19 @@
               [total]="total"
               [limit]="limit"
               (pageUpdated)="onPageChange($event)">
+  <ng-template tableDataColumn="dateTime" let-row="row">
+    {{row?.enterDate | date:'mediumDate'}} {{row?.time | date:'shortTime'}}
+  </ng-template>
   <ng-template tableDataColumn="customerName" let-row="row">
     <div class="d-flex align-items-center gap-2">
       <app-shape-card [imageUrl]="row?.customerProfileImage || '/assets/images/user-image.png'"
                       [customClass]="''"
                       [customStyles]="{borderRadius:'50%',height:'40px', width:'40px'}">
       </app-shape-card>
-      {{row?.fullName}}
+      <div class="d-flex flex-column gap-2">
+        <span class="cb-clr fw-600">{{row?.driverCustomerID[0]?.fullName}}</span>
+        <span class="cbs-clr font-12">{{row?.driverCustomerID[0]?.customerPhone}}</span>
+      </div>
     </div>
   </ng-template>  <ng-template tableDataColumn="status" let-row="row">
     <div class="status-tag"

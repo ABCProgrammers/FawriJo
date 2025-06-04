@@ -14,23 +14,23 @@
       </div>
       <div class="col-12 mb-3">
         <label class="input-label asterik">Full Name</label>
-        <input type="text" formControlName="customerName" class="form-control input-control" placeholder="Full Name" />
-        <validation-error [control]="f.get('customerName')" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <input type="text" formControlName="fullName" class="form-control input-control" placeholder="Full Name" />
+        <validation-error [control]="f.get('fullName')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <div class="col-6 mb-3">
         <label class="input-label asterik">First Name</label>
-        <input type="text" formControlName="customerName" class="form-control input-control" placeholder="First Name" />
-        <validation-error [control]="f.get('customerName')" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <input type="text" formControlName="firstName" class="form-control input-control" placeholder="First Name" />
+        <validation-error [control]="f.get('firstName')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label asterik">Last Name</label>
-        <input type="text" formControlName="customerName" class="form-control input-control" placeholder="Last Name" />
-        <validation-error [control]="f.get('customerName')" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <label class="input-label asterik">Family Name</label>
+        <input type="text" formControlName="familyName" class="form-control input-control" placeholder="Family Name" />
+        <validation-error [control]="f.get('familyName')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <div class="col-6 mb-3">
         <label class="input-label asterik">National ID</label>
-        <input type="text" formControlName="customerName" class="form-control input-control" placeholder="National Id" />
-        <validation-error [control]="f.get('customerName')" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <input type="text" formControlName="nationalID" class="form-control input-control" placeholder="National Id" />
+        <validation-error [control]="f.get('nationalID')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <!--PROFILE IMAGE-->
       <div class="col-6 mb-3">
@@ -98,7 +98,7 @@
 
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label">City</label>
+        <label class="input-label asterik">City</label>
         <ng-select [items]="cityList"
                    formControlName="customerCity"
                    placeholder="City"
@@ -106,21 +106,23 @@
                    bindValue="lookupID"
                    class="input-dropdown">
         </ng-select>
+        <validation-error [control]="f.get('customerCity')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <div class="col-6 mb-3">
-        <label class="input-label">Customer Type</label>
+        <label class="input-label asterik">Customer Type</label>
         <ng-select [items]="customerTypeList"
-                   formControlName="customerCity"
+                   formControlName="customerLevelID"
                    placeholder="Customer Type"
                    bindLabel="lookupNameEN"
                    bindValue="lookupID"
                    class="input-dropdown">
         </ng-select>
+        <validation-error [control]="f.get('customerLevelID')" [errorMessages]="{required:'Input is required'}"></validation-error>
       </div>
       <div class="col-6 mb-3">
         <label class="input-label">Business Category</label>
         <ng-select [items]="businessTypeList"
-                   formControlName="customerCity"
+                   formControlName="businessCategoryID"
                    placeholder="Business Category"
                    bindLabel="lookupNameEN"
                    bindValue="lookupID"
