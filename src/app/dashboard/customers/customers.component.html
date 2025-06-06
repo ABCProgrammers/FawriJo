@@ -135,7 +135,7 @@
       <div ngbDropdown class="d-inline-block table-action-dropdown" *ngIf="multiSelectedItems.length">
         <i class="fa-solid fa-ellipsis-vertical cursor-pointer font-20" ngbDropdownToggle></i>
         <div ngbDropdownMenu class="dropdown-menu-end">
-          <button ngbDropdownItem type="button" (click)="handleMultiActionClick('block')">Block Customer</button>
+          <button ngbDropdownItem type="button" *ngIf="!isBlockedStatus" (click)="handleMultiActionClick('block')">Block Customer</button>
           <button ngbDropdownItem type="button" (click)="handleMultiActionClick('notification')">Send Notification</button>
         </div>
       </div>
@@ -161,7 +161,7 @@
   <ng-template tableDataColumn="action" let-row="row">
     <div class="d-flex gap-1">
       <div *ngIf="customerType.Driver == row?.customerLevel?.lookupID" class="table-actions wallet"
-           [routerLink]="appRoutes.Customers.Wallet" [queryParams]="{id:row?.customerID}"><img src="/assets/images/wallet.svg" /> </div>
+           [routerLink]="appRoutes.Customers.Wallet" [queryParams]="{id:row?.customerID,name:row?.fullName}"><img src="/assets/images/wallet.svg" /> </div>
       <div (click)="handleAddClick(row)" class="table-actions edit">
         <img src="/assets/images/edit.svg" />
       </div>

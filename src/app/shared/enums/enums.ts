@@ -16,6 +16,7 @@ export enum Status {
   Active = 1001,
   InActive = 1002,
   Deleted = 1003,
+  Blocked = 1007,
 }
 export enum FileExtensionEnum {
   MP4 = 'video/mp4',

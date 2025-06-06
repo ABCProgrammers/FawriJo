@@ -95,6 +95,8 @@ export class AddCustomerComponent {
       };
       this.f.patchValue(obj);
       this.f.disable();
+      this.f.get('customerPassword').clearValidators();
+      this.f.get('customerPassword').updateValueAndValidity();
     }
   }
   getLookups() {

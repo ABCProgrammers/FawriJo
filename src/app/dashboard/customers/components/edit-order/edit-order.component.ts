@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import {FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { catchError, of, forkJoin, takeUntil, Subject } from 'rxjs';
 import { HttpService } from '../../../../core/services/http.service';
@@ -21,7 +21,8 @@ export class EditOrderComponent {
   tempCityList = [];
   orderCategoryList = [];
   orderStatusList = [];
-
+  view = false;
+  edit = false;
   //Input Mobile Start
   separateDialCode = false;
   SearchCountryField = SearchCountryField;
@@ -43,28 +44,66 @@ export class EditOrderComponent {
   }
   initForm() {
     this.formGroup = this.fb.group({
-      name: ['', Validators.required],
-      lookup: [null],
-      status: [true],
+      senderName: [''], //Readonly
+      senderMobile: [''], //Readonly
+      fromCountryID: [null, Validators.required],
+      fromCityID: [null, Validators.required],
+      fromFullAddress: [''],
+      toCountry: [''], //Readonly
+      toCityID: [null, Validators.required],
+      toFullAddress: [''],
+      receiverName: [''],
+      receiverMobile: [''],
+      customerOrderCategoryID: [null, Validators.required],
+      orderStatus: [''], //Readonly
+      customerOrderDesc: [''],
+      customerOrderPrice: ['', Validators.required],
+      fees: [''], //Readonly
+      customerOrderComments: [''],
     });
-    if (this.data?.edit) {
+    if (this.data?.edit || this.data?.view) {
       let row = this.data.row;
-      //this.f.patchValue(row);
-      //this.f.disable();
+      this.view = this.data?.view;
+      this.edit = this.data?.edit;
+      let obj = {
+        senderName: row?.fromCustomerID[0]?.fullName,
+        senderMobile: row?.fromCustomerID[0]?.customerPhone,
+        fromCountryID: row?.fromCountryID?.lookupID,
+        fromCityID: row?.fromCityID?.lookupID,
+        fromFullAddress: row?.fromFullAddress,
+        toCountry: row?.fromCountryID?.lookupNameEN?.lookupName,
+        toCityID: row?.toCityID?.lookupID,
+        toFullAddress: row?.toFullAddress,
+        receiverName: row?.receiverName,
+        receiverMobile: row?.receiverMobile,
+        customerOrderCategoryID: row?.customerOrderCategoryID?.lookupID,
+        orderStatus: row?.customerOrderStatus?.lookupNameEN?.lookupName,
+        customerOrderDesc: row?.customerOrderDesc,
+        customerOrderPrice: row?.customerOrderPrice,
+        fees: row?.orderDeliveryFees,
+        customerOrderComments: row?.customerOrderComments,
+      }
+      this.f.patchValue(obj);
+      if (this.edit) {
+        let controls = ['senderName', 'senderMobile', 'toCountry', 'orderStatus', 'fees'];
+        controls.forEach(x => {
+          this.f.get(x).disable();
+        })
+      }
+      else if (this.view)
+        this.f.disable();
     }
   }
   getLookups() {
     this._httpService._spinnerService.show();
     const country$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=2&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const city$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=3&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    const category$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=17&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    const orderStatus$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=17&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    forkJoin([country$, city$, category$, orderStatus$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
+    const category$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=18&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
+    forkJoin([country$, city$, category$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
       this.countryList = response[0].data;
       this.cityList = response[1].data;
       this.tempCityList = [...this.cityList];
       this.orderCategoryList = response[2].data;
-      this.orderStatusList = response[3].data;
       let desc = this.countryList.map(x => x?.translations[0]?.lookupDesc);
       desc.forEach(x => {
         let iso = x.split(':')[1].trim()?.toLowerCase();
@@ -73,40 +112,31 @@ export class EditOrderComponent {
       });
     }).add(() => { this._httpService._spinnerService.hide() })
   }
-
-  bindFormData() {
-    if (this.data?.edit) {
-      const dataRow = this.data?.row;
-    }
-  }
   handleCountryChange(event) {
-    this.f.get('customerCity').setValue(null);
+    this.f.get('fromCityID').setValue(null);
+    this.f.get('toCityID').setValue(null);
     this.cityList = [];
-    if (event)
+    if (event) {
       this.cityList = this.tempCityList.filter(x => x.lookupParent == event.lookupID);
+      this.f.get('toCountry').setValue(event?.lookupNameEN);
+    }
   }
   saveData() {
     if (this.f.invalid) {
       this.f.markAllAsTouched();
       return;
     }
-    return;
     const value = this.f.value;
     this._httpService._spinnerService.show();
-    let controls = ['customerPhone', 'customerDOB', 'status', 'confirmPassword'];
+    let controls = ['senderName', 'senderMobile', 'receiverMobile', 'toCountry', 'orderStatus', 'fees'];
     const formData = this._httpService._helperService.convertFormGroupToFormData(this.f, controls);
-    formData.append('customerDOB', (this._httpService._helperService.dateFormate(value?.customerDOB)) || '');
-    formData.append('customerPhone', value.customerPhone.e164Number);
-    formData.append('status', value.status && '1001' || '1002');
-    let URL = this._httpService.apiUrl.Customers.AddCustomer;
-    if (this.data?.edit) {
-      URL = this._httpService.apiUrl.Customers.AddCustomer;
-      formData.append('highlightID', this.data?.row?.highlightID);
-    }
+    formData.append('receiverMobile', value.receiverMobile.e164Number);
+    formData.append('customerOrderID', this.data?.row.customerOrderID);
+    let URL = this._httpService.apiUrl.Orders.EditOrder;
     this._httpService.post(`${URL}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
       next: response => {
         if (response.isSuccess) {
-          this.eventData.emit({ highlightSaved: true });
+          this.eventData.emit(true);
           this.responseModal('success', 'Data saved successfully!')
         }
       },

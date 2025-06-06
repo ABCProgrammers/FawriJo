@@ -54,4 +54,10 @@ export const ApiUrls = {
     ViewDriverWalletDetails: 'Wallet/ViewDriverWalletDetails',
     AddMoneyToDriverWallet: 'Wallet/AddMoneyToDriverWallet',
   },
+  Orders: {
+    AddOrder: 'Orders/AddOrder',
+    EditOrder: 'Orders/EditOrder',
+    GetOrders: 'Orders/GetOrders',
+    DeleteOrders: 'Orders/DeleteOrders',
+  },
 }

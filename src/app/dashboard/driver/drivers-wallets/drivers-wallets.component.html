@@ -77,7 +77,8 @@
         <span class="cbs-clr font-12">{{row?.driverCustomerID[0]?.customerPhone}}</span>
       </div>
     </div>
-  </ng-template>  <ng-template tableDataColumn="status" let-row="row">
+  </ng-template>
+  <ng-template tableDataColumn="status" let-row="row">
     <div class="status-tag"
          [style.background-color]="row?.status?.lookupBGColor"
          [style.color]="row?.status?.lookupTextColor">

@@ -1,7 +1,7 @@
 <!--{{f.value | json}}-->
 <div class="modal-header justify-content-between align-items-center">
-  <h6 ngbAutoFocus class="font-20 fw-600">{{(data?.edit && 'Edit Customer' || 'Add New Customer')}}</h6>
-  <i *ngIf="data?.edit" (click)="toggleEdit()" class="fas fa-pencil font-22 success-clr cursor-pointer"></i>
+  <h6 ngbAutoFocus class="font-20 fw-600">{{(data?.edit && 'Edit Order' || 'View Order Details')}}</h6>
+  <!--<i *ngIf="data?.edit" (click)="toggleEdit()" class="fas fa-pencil font-22 success-clr cursor-pointer"></i>-->
 </div>
 <div class="modal-body">
   <form [formGroup]="f">
@@ -10,12 +10,11 @@
         <app-card>
           <div class="row">
             <div class="col-6 mb-3">
-              <label class="input-label asterik">Sender Name</label>
-              <input type="text" formControlName="name" class="form-control input-control" placeholder="Sender Name" />
-              <validation-error [control]="f.get('name')" [errorMessages]="{required:'Input is required'}"></validation-error>
+              <label class="input-label">Sender Name</label>
+              <input type="text" formControlName="senderName" class="form-control input-control" placeholder="Sender Name" />
             </div>
             <div class="col-6 mb-3">
-              <label class="input-label asterik">Mobile</label>
+              <label class="input-label">Mobile</label>
               <ng-container *ngIf="onlyCountries.length">
                 <ngx-intl-tel-input [enableAutoCountrySelect]="true"
                                     [onlyCountries]="onlyCountries"
@@ -26,43 +25,38 @@
                                     [phoneValidation]="true"
                                     [separateDialCode]="separateDialCode"
                                     [numberFormat]="PhoneNumberFormat.National"
-                                    formControlName="name">
+                                    formControlName="senderMobile">
                 </ngx-intl-tel-input>
-                <ng-container *ngIf="f.get('name')?.invalid && f.get('name')?.touched">
-                  <span *ngIf="f.get('name')?.errors?.['required']" class="validation-error d-block">Input is required</span>
-                  <ng-container *ngIf="!f.get('name')?.errors?.['required']">
-                    <span *ngIf="!f.get('name')?.errors?.['validatePhoneNumber']?.valid" class="validation-error d-block">Invalid phone number</span>
-                  </ng-container>
-                </ng-container>
               </ng-container>
             </div>
             <div class="col-6 mb-3">
               <label class="input-label asterik">Country</label>
               <ng-select [items]="countryList"
-                         formControlName="lookup"
+                         formControlName="fromCountryID"
                          placeholder="Country"
                          bindLabel="lookupNameEN"
                          bindValue="lookupID"
                          (change)="handleCountryChange($event)"
                          class="input-dropdown">
               </ng-select>
-              <validation-error [control]="f.get('lookup')" [errorMessages]="{required:'Input is required'}"></validation-error>
+              <validation-error [control]="f.get('fromCountryID')" [errorMessages]="{required:'Input is required'}"></validation-error>
 
             </div>
             <div class="col-6 mb-3">
-              <label class="input-label">City</label>
+              <label class="input-label asterik">City</label>
               <ng-select [items]="cityList"
-                         formControlName="lookup"
+                         formControlName="fromCityID"
                          placeholder="City"
                          bindLabel="lookupNameEN"
                          bindValue="lookupID"
                          class="input-dropdown">
               </ng-select>
+              <validation-error [control]="f.get('fromCityID')" [errorMessages]="{required:'Input is required'}"></validation-error>
             </div>
             <div class="col-12 mb-3">
               <label class="input-label asterik">Full Address</label>
-              <input type="text" formControlName="name" class="form-control input-control" placeholder="Full Address" />
-              <validation-error [control]="f.get('name')" [errorMessages]="{required:'Input is required'}"></validation-error>
+              <input type="text" formControlName="fromFullAddress" class="form-control input-control" placeholder="Full Address" />
+              <validation-error [control]="f.get('fromFullAddress')" [errorMessages]="{required:'Input is required'}"></validation-error>
             </div>
           </div>
 
@@ -73,8 +67,8 @@
           <div class="row">
             <div class="col-6 mb-3">
               <label class="input-label asterik">Reciever Name</label>
-              <input type="text" formControlName="name" class="form-control input-control" placeholder="Reciever Name" />
-              <validation-error [control]="f.get('name')" [errorMessages]="{required:'Input is required'}"></validation-error>
+              <input type="text" formControlName="receiverName" class="form-control input-control" placeholder="Reciever Name" />
+              <validation-error [control]="f.get('receiverName')" [errorMessages]="{required:'Input is required'}"></validation-error>
             </div>
             <div class="col-6 mb-3">
               <label class="input-label asterik">Mobile</label>
@@ -88,42 +82,35 @@
                                     [phoneValidation]="true"
                                     [separateDialCode]="separateDialCode"
                                     [numberFormat]="PhoneNumberFormat.National"
-                                    formControlName="name">
+                                    formControlName="receiverMobile">
                 </ngx-intl-tel-input>
-                <ng-container *ngIf="f.get('name')?.invalid && f.get('name')?.touched">
-                  <span *ngIf="f.get('name')?.errors?.['required']" class="validation-error d-block">Input is required</span>
-                  <ng-container *ngIf="!f.get('name')?.errors?.['required']">
-                    <span *ngIf="!f.get('name')?.errors?.['validatePhoneNumber']?.valid" class="validation-error d-block">Invalid phone number</span>
+                <ng-container *ngIf="f.get('receiverMobile')?.invalid && f.get('receiverMobile')?.touched">
+                  <span *ngIf="f.get('receiverMobile')?.errors?.['required']" class="validation-error d-block">Input is required</span>
+                  <ng-container *ngIf="!f.get('receiverMobile')?.errors?.['required']">
+                    <span *ngIf="!f.get('receiverMobile')?.errors?.['validatePhoneNumber']?.valid" class="validation-error d-block">Invalid phone number</span>
                   </ng-container>
                 </ng-container>
               </ng-container>
             </div>
             <div class="col-6 mb-3">
-              <label class="input-label asterik">Country</label>
-              <ng-select [items]="countryList"
-                         formControlName="lookup"
-                         placeholder="Country"
-                         bindLabel="lookupNameEN"
-                         bindValue="lookupID"
-                         (change)="handleCountryChange($event)"
-                         class="input-dropdown">
-              </ng-select>
-              <validation-error [control]="f.get('lookup')" [errorMessages]="{required:'Input is required'}"></validation-error>
+              <label class="input-label">Country</label>
+              <input type="text" formControlName="toCountry" class="form-control input-control" placeholder="Reciever Name" />
             </div>
             <div class="col-6 mb-3">
-              <label class="input-label">City</label>
+              <label class="input-label asterik">City</label>
               <ng-select [items]="cityList"
-                         formControlName="lookup"
+                         formControlName="toCityID"
                          placeholder="City"
                          bindLabel="lookupNameEN"
                          bindValue="lookupID"
                          class="input-dropdown">
               </ng-select>
+              <validation-error [control]="f.get('toCityID')" [errorMessages]="{required:'Input is required'}"></validation-error>
             </div>
             <div class="col-12 mb-3">
               <label class="input-label asterik">Full Address</label>
-              <input type="text" formControlName="name" class="form-control input-control" placeholder="Full Address" />
-              <validation-error [control]="f.get('name')" [errorMessages]="{required:'Input is required'}"></validation-error>
+              <input type="text" formControlName="toFullAddress" class="form-control input-control" placeholder="Full Address" />
+              <validation-error [control]="f.get('toFullAddress')" [errorMessages]="{required:'Input is required'}"></validation-error>
             </div>
           </div>
         </app-card>
@@ -131,14 +118,14 @@
       <div class="col-12 mt-3">
         <app-card>
           <div class="d-flex align-items-center gap-3 mb-4">
-            <h6 class="font-20 fw-600">Order Details Secret Code #123456</h6>
-            <span class="order-status-tag">Delivered</span>
+            <h6 class="font-20 fw-600">Order Details</h6>
+            <span class="order-status-tag">{{f.get('orderStatus').value}}</span>
           </div>
           <div class="row">
             <div class="col-6 mb-3">
-              <label class="input-label">Order Items Category</label>
+              <label class="input-label asterik">Order Items Category</label>
               <ng-select [items]="orderCategoryList"
-                         formControlName="lookup"
+                         formControlName="customerOrderCategoryID"
                          placeholder="Category"
                          bindLabel="lookupNameEN"
                          bindValue="lookupID"
@@ -147,29 +134,23 @@
             </div>
             <div class="col-6 mb-3">
               <label class="input-label">Status</label>
-              <ng-select [items]="orderStatusList"
-                         formControlName="lookup"
-                         placeholder="Status"
-                         bindLabel="lookupNameEN"
-                         bindValue="lookupID"
-                         class="input-dropdown">
-              </ng-select>
+              <input type="text" formControlName="orderStatus" class="form-control input-control" placeholder="Order Status" />
             </div>
             <div class="col-12 mb-3">
-              <label class="input-label asterik">Description</label>
-              <input type="text" formControlName="name" class="form-control input-control" placeholder="Description" />
+              <label class="input-label">Description</label>
+              <input type="text" formControlName="customerOrderDesc" class="form-control input-control" placeholder="Description" />
             </div>
             <div class="col-6 mb-3">
               <label class="input-label asterik">Price (JOD)</label>
-              <input type="text" formControlName="name" class="form-control input-control" placeholder="Price (JOD)" />
+              <input type="text" decimalOnly formControlName="customerOrderPrice" class="form-control input-control" placeholder="Price (JOD)" />
             </div>
             <div class="col-6 mb-3">
-              <label class="input-label asterik">Fees (JOD)</label>
-              <input type="text" formControlName="name" class="form-control input-control" placeholder="Fees (JOD)" />
+              <label class="input-label">Delivery Fees (JOD)</label>
+              <input type="text" formControlName="fees" class="form-control input-control" placeholder="Fees (JOD)" />
             </div>
             <div class="col-12 mb-3">
-              <label class="input-label asterik">Order Comments</label>
-              <input type="text" formControlName="name" class="form-control input-control" placeholder="Comments" />
+              <label class="input-label">Order Comments</label>
+              <input type="text" formControlName="customerOrderComments" class="form-control input-control" placeholder="Comments" />
             </div>
           </div>
         </app-card>
@@ -180,6 +161,6 @@
 <div class="modal-footer border-top-0">
   <div class="d-flex justify-content-end gap-2">
     <button type="button" class="btn btn-outline-dark" (click)="_activeModal.close()">Cancel</button>
-    <button type="button" class="btn btn-primary" [disabled]="f.disabled" (click)="saveData()">Save Order</button>
+    <button type="button" *ngIf="!view" class="btn btn-primary" [disabled]="f.disabled" (click)="saveData()">Save Order</button>
   </div>
 </div>

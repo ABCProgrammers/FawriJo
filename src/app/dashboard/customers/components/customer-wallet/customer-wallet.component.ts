@@ -6,6 +6,7 @@ import { HeaderService } from '../../../../core/services/header.service';
 import { HttpService } from '../../../../core/services/http.service';
 import { ActivatedRoute } from '@angular/router';
 import { ExportService } from '../../../../core/services/export.service';
+import { AppRoutes } from '../../../../shared/routes/appRoutes';
 
 @Component({
   selector: 'app-customer-wallet',
@@ -35,6 +36,7 @@ export class CustomerWalletComponent {
   driverId = 0;
   totalAmount = 0;
   driverName = '';
+  appRoutes = AppRoutes;
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
@@ -49,6 +51,7 @@ export class CustomerWalletComponent {
     this.initTableColumns();
     this._activeRoute.queryParams.subscribe(params => {
       this.driverId = +params['id'];
+      this.driverName = params['name'];
       this.getDataList();
     })
     this.initFilterForm();
@@ -93,7 +96,6 @@ export class CustomerWalletComponent {
           ...x,
           time: this._httpService._helperService.appendDateWithTime(x?.enterTime),
         }));
-        this.driverName = this.dataList[0]?.driverCustomerID[0]?.fullName;
         this.totalAmount = response?.info?.totalAllRecordsCount;
         this.total = response?.info?.totalRecordsCount;
       },

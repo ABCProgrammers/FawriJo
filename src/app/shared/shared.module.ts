@@ -59,7 +59,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     NgxIntlTelInputModule,
     AngularSvgIconModule.forRoot(),
     TabsModule,
-    QuillModule,
+    QuillModule.forRoot(),
     NgxSliderModule
   ],
   exports: [

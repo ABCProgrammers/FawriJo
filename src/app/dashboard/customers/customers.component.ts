@@ -49,6 +49,7 @@ export class CustomersComponent {
   appRoutes = AppRoutes;
   customerType = CustomerType;
   multiSelectedItems = [];
+  isBlockedStatus = false;
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
@@ -128,6 +129,7 @@ export class CustomersComponent {
   }
   handleMultiSelect(event) {
     this.multiSelectedItems = event.selectedItems;
+    this.isBlockedStatus = this.multiSelectedItems.every(x => x?.status?.lookupID == Status.Blocked);
   }
   handleMultiActionClick(from) {
     if (from == 'block') {
@@ -155,7 +157,7 @@ export class CustomersComponent {
   }
   blockCustomers() {
     this._httpService._spinnerService.show();
-    let customerIds = this.multiSelectedItems.map(x => x.customerID);
+    let customerIds = this.multiSelectedItems.filter(x => x.status?.lookupID != Status.Blocked).map(x => x.customerID);
     const formData = new FormData();
     formData.append('customerIDs', customerIds.toString());
     this._httpService.post(`${this._httpService.apiUrl.Customers.BlockCustomers}`, formData).pipe(takeUntil(this.destroy$)).subscribe({

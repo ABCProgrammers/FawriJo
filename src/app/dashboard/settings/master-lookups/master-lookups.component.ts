@@ -137,7 +137,7 @@ export class MasterLookupsComponent {
     modalRef.componentInstance.eventData.pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         modalRef.dismiss();
-        this.pageNo = 1;
+        this.resetFilterForm();
         this.getDataList();
       }
     });
@@ -165,7 +165,7 @@ export class MasterLookupsComponent {
       next: response => {
         if (response.isSuccess) {
           this.responseModal('success', 'Data deleted successfully!');
-          this.pageNo = 1;
+          this.resetFilterForm();
           this.getDataList();
         }
       },

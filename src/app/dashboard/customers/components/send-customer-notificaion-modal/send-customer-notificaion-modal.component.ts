@@ -16,16 +16,13 @@ export class SendCustomerNotificaionModalComponent {
   @Input() data;
   @Output() eventData = new EventEmitter();
   formGroup: FormGroup;
-  minDate;
+  minDate = new Date();
   constructor(
     public _activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private _httpService: HttpService,
     private _modalService: NgbModal,
   ) {
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + 1);
-    this.minDate = currentDate;
   }
   ngOnInit() {
     this.initForm();
@@ -35,8 +32,8 @@ export class SendCustomerNotificaionModalComponent {
       notificationTitle: ['', Validators.required],
       notificationText: ['', Validators.required],
       schedule: [false],
-      scheduledDate: [''],
-      scheduledTime: [''],
+      scheduledDate: [{ value: '', disabled: true }],
+      scheduledTime: [{ value: '', disabled: true }],
     });
   }
   handleScheduleChange(event) {
@@ -46,19 +43,27 @@ export class SendCustomerNotificaionModalComponent {
     if (checked) {
       date.addValidators([Validators.required]);
       time.addValidators([Validators.required]);
+      date.enable();
+      time.enable();
     }
     else {
       date.clearValidators();
       time.clearValidators();
+      date.disable();
+      time.disable();
+      date.setValue('');
+      time.setValue('');
     }
     date.updateValueAndValidity();
     time.updateValueAndValidity();
   }
   onQuillContentChanged(event) {
+    let value = this.formGroup.get('notificationText').value;
+    if (!value) return;
     const delta = event.editor.editor.delta.ops;
     const converter = new QuillDeltaToHtmlConverter(delta as any, {});
     const html = converter.convert();
-    this.formGroup.get('notificationText').setValue(html, { emitEvent: false });
+    this.formGroup.get('notificationText').setValue(html);
   }
   saveData() {
     if (this.formGroup.invalid) {
@@ -72,9 +77,7 @@ export class SendCustomerNotificaionModalComponent {
     formData.append('customerIDs', this.data.customerIds);
     if (value.schedule) {
       formData.append('scheduledDate', this._httpService._helperService.dateFormate(value.scheduledDate));
-      //const currentDate = new Date();
       let time = value.scheduledTime;
-      //currentDate.setHours(time.hour, time.minute, time.second, 0);
       const values = `${time.hour}:${time.minute}:${time.second}`
       formData.append('scheduledTime', values);
     }
@@ -83,7 +86,7 @@ export class SendCustomerNotificaionModalComponent {
       next: response => {
         if (response.isSuccess) {
           this.eventData.emit(true);
-          this.responseModal('success', 'Data saved successfully!')
+          this.responseModal('success', 'Your notification sent successfully!')
         }
       },
       error: err => {

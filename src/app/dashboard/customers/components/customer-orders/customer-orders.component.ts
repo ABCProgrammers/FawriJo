@@ -29,7 +29,7 @@ export class CustomerOrdersComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.4fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr .70fr 1.5fr',
+    tableLayout: '.4fr 1.25fr .60fr 1fr 1fr 1fr .60fr .80fr .80fr .80fr 1.3fr',
   };
   tableColumns: TableColumn[] = [];
 
@@ -39,6 +39,7 @@ export class CustomerOrdersComponent {
   cityList = [];
   tempCityList = [];
   categoryList = [];
+  customerList = [];
   filterParams;
   showFilter = false;
   statusEnum = Status;
@@ -60,10 +61,12 @@ export class CustomerOrdersComponent {
 
   initFilterForm() {
     this.filterForm = this.fb.group({
-      search: [''],
-      status: [null],
-      country: [null],
-      city: [null],
+      fromCustomerID: [null],
+      orderStatus: [null],
+      fromCountryID: [null],
+      fromCityID: [null],
+      toCityID: [null],
+      orderCategoryID: [null],
       creationDate: [''],
     });
     this.filterForm.valueChanges.pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$)).subscribe((data) => {
@@ -72,8 +75,8 @@ export class CustomerOrdersComponent {
       if (formValues?.creationDate) {
         formValues = {
           ...formValues,
-          dateOfRegisterationFrom: this._httpService._helperService.dateFormate(formValues?.creationDate[0]),
-          dateOfRegisterationTo: this._httpService._helperService.dateFormate(formValues?.creationDate[1]),
+          enteredFrom: this._httpService._helperService.dateFormate(formValues?.creationDate[0]),
+          enteredTo: this._httpService._helperService.dateFormate(formValues?.creationDate[1]),
         };
       }
       delete formValues.creationDate;
@@ -84,17 +87,27 @@ export class CustomerOrdersComponent {
   getLookups() {
     this._httpService._spinnerService.show();
     const country$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=2&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    const category$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=17&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
+    const category$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=18&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const city$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=3&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    const status$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=1&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    forkJoin([country$, category$, city$, status$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
+    const status$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=19&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
+    const customers$ = this._httpService.get(`${this._httpService.apiUrl.Customers.GetCustomers}?status=1001&pageSize=100000`).pipe(catchError(error => of(error)));
+    forkJoin([country$, category$, city$, status$, customers$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
       this.countryList = response[0].data;
-      this.categoryList = [];
+      this.categoryList = response[1].data;
       this.cityList = response[2].data;
       this.tempCityList = [...this.cityList]
-      this.statusList = response[3].data.filter(x => x.lookupID == Status.Active || x.lookupID == Status.InActive);
+      this.statusList = response[3].data;
+      this.customerList = response[4].data;
       this.getDataList();
     })
+  }
+  handleCountryChange(event) {
+    this.filterForm.get('fromCityID').setValue(null);
+    this.filterForm.get('toCityID').setValue(null);
+    if (event)
+      this.cityList = this.tempCityList.filter(x => x.lookupParent == event.lookupID);
+    else
+      this.cityList = this.tempCityList;
   }
   handleOrderTrackingClick(row) {
     const modalRef = this._modalService.open(OrderTrackingComponent, { size: 'xl' });
@@ -102,7 +115,7 @@ export class CustomerOrdersComponent {
   }
   handleOrderDetailsClick(row, from) {
     const modalRef = this._modalService.open(EditOrderComponent, { size: 'xl' });
-    modalRef.componentInstance.data = { edit: (row && true || false), row };
+    modalRef.componentInstance.data = { [from]: true, row };
     modalRef.componentInstance.eventData.subscribe(x => {
       this.getDataList();
       modalRef.dismiss();
@@ -110,7 +123,7 @@ export class CustomerOrdersComponent {
   }
   getDataList(params?) {
     params && this._httpService._spinnerService.show();
-    let APIURL = `${this._httpService.apiUrl.Customers.GetCustomers}?`;
+    let APIURL = `${this._httpService.apiUrl.Orders.GetOrders}?`;
     let defaultParams = `&pageSize=${this.limit}&pageNo=${this.pageNo - 1}`;
     let url = params && `${APIURL}${params}${defaultParams}` || `${APIURL}${defaultParams}`;
     this._httpService.get(url).pipe(takeUntil(this.destroy$)).subscribe({
@@ -131,8 +144,8 @@ export class CustomerOrdersComponent {
   confirmDelete(row) {
     const modalRef = this._modalService.open(ConfirmModalComponent);
     modalRef.componentInstance.data = {
-      headingText: 'Delete Customer',
-      body: 'Are you sure you want to delete this customer?',
+      headingText: 'Delete Order',
+      body: 'Are you sure you want to delete this order?',
       confirmText: 'Delete',
     }
     modalRef.componentInstance.eventData.pipe(takeUntil(this.destroy$)).subscribe({
@@ -144,11 +157,10 @@ export class CustomerOrdersComponent {
     });
   }
   deleteRow(row) {
-    return;
     this._httpService._spinnerService.show();
     const formData = new FormData();
-    formData.append('highlightID', row?.highlightID);
-    this._httpService.post(`${this._httpService.apiUrl.Customers.AddCustomer}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
+    formData.append('customerOrderID', row?.customerOrderID);
+    this._httpService.post(`${this._httpService.apiUrl.Orders.DeleteOrders}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
       next: response => {
         if (response.isSuccess) {
           this.responseModal('success', 'Data deleted successfully!');
@@ -217,15 +229,15 @@ export class CustomerOrdersComponent {
   }
   initTableColumns() {
     this.tableColumns = [
-      { key: 'customerID', label: 'ID #' },
-      { key: 'customerName', label: 'Customer' },
-      { key: 'customerCity.lookupNameEN.lookupName', label: 'City' },
-      { key: 'cat', label: 'Category' },
-      { key: 'price', label: 'Price & Fess' },
+      { key: 'customerOrderID', label: 'ID #' },
+      { key: 'fromCustomerID', label: 'Customer' },
+      { key: 'fromCityID.lookupNameEN.lookupName', label: 'City' },
+      { key: 'customerOrderCategoryID.lookupNameEN.lookupName', label: 'Category' },
+      { key: 'price', label: 'Price & Fees' },
       { key: 'receiverName', label: 'Receiver Name' },
-      { key: 'receiverCity', label: 'City' },
-      { key: 'createdAr', label: 'Created At' },
-      { key: 'createdBy', label: 'Created By' },
+      { key: 'toCityID.lookupNameEN.lookupName', label: 'City' },
+      { key: 'enterDate', label: 'Created At', dateFormat: 'mediumDate' },
+      { key: 'enterUser[0].fullName', label: 'Created By' },
       { key: 'status', label: 'Status' },
       { key: 'action', label: 'Action' },
     ];
