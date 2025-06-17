@@ -1,0 +1,45 @@
+@import '../../assets/scss/_variables.scss';
+
+:host {
+  .order-card {
+    padding: 24px 16px;
+    height: 118px;
+    background: #FFFFFF;
+    box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.075);
+    border-radius: 8px;
+
+    .icon {
+      height: 42px;
+      width: 42px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.pending {
+        border: 1px solid #FF9F29;
+        background: #FFF1DF;
+      }
+
+      &.processing {
+        border: 1px solid #165DFF;
+        background: #DCE7FF;
+      }
+
+      &.delivering {
+        border: 1px solid #5D4B99;
+        background: #E7E4F0;
+      }
+
+      &.delivered {
+        border: 1px solid #45B369;
+        background: #E3F4E9;
+      }
+
+      &.deleted {
+        border: 1px solid #EF4770;
+        background: #FDE4EA;
+      }
+    }
+  }
+}

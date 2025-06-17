@@ -31,7 +31,7 @@ export class CustomersComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.2fr .4fr 1fr 1.5fr 1fr 1fr 1fr 1fr .6fr 1fr',
+    tableLayout: '.2fr .4fr 1.2fr .90fr .60fr .80fr .80fr .70fr 1fr .6fr 1fr',
   };
   tableColumns: TableColumn[] = [];
 
@@ -267,6 +267,7 @@ export class CustomersComponent {
     this.getDataList();
   }
   onPageChange(page: number) {
+    this.multiSelectedItems.length && this.clearSelectedRow();
     this.pageNo = page;
     this.getDataList(this.filterParams);
   }
@@ -311,6 +312,7 @@ export class CustomersComponent {
       { key: 'businessCategory.lookupNameEN.lookupName', label: 'Business' },
       { key: 'customerCountry.lookupNameEN.lookupName', label: 'Country' },
       { key: 'customerCity.lookupNameEN.lookupName', label: 'City' },
+      { key: 'loginStatus', label: 'Login Status' },
       { key: 'status', label: 'Status' },
       { key: 'action', label: '' },
     ];

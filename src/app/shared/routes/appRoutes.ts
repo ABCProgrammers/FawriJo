@@ -1,5 +1,8 @@
 export const AppRoutes = {
- MasterPages: {
+  Dashboard: {
+    Home: '/dashboard'
+  },
+  MasterPages: {
     Listing: '/master-pages',
     Add: '/master-pages/add-master-page',
   },

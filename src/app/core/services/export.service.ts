@@ -17,6 +17,7 @@ export class ExportService {
     let data = customers.map(x => ([
       x?.customerID,
       x?.fullName,
+      x?.nationalID,
       x?.customerPhone,
       x?.customerLevel?.lookupNameEN?.lookupName,
       x?.businessCategory?.lookupNameEN?.lookupName,
@@ -28,10 +29,36 @@ export class ExportService {
       {
         heading: ['Customers'],
         data,
-        headers: ['ID', 'Full Name', 'Phone', 'Type', 'Business', 'Country', 'City', 'Status'],
+        headers: ['ID', 'Full Name', 'National ID', 'Phone', 'Type', 'Business', 'Country', 'City', 'Status'],
       }
     ];
     this._excelService.exportToExcel(sections, 'Customers');
+  }
+  exportCustomersOrders(orders: any[]) {
+    let data = orders.map(x => ([
+      x?.customerOrderID,
+      x?.fromCustomerID[0]?.fullName,
+      x?.fromCustomerID[0]?.customerPhone,
+      x?.fromCityID?.lookupNameEN?.lookupName,
+      x?.customerOrderCategoryID?.lookupNameEN?.lookupName,
+      `${this.currencyFormate(x?.customerOrderPrice)} JOD`,
+      `${this.currencyFormate(x?.orderDeliveryFees)} JOD`,
+      `${this.currencyFormate(x?.orderCompanyComission || 0)} JOD`,
+      x?.receiverName,
+      x?.toCityID?.lookupNameEN?.lookupName,
+      x?.enterUser[0]?.fullName,
+      `${this.dateFormate(x?.enterDate)} ${this.dateFormate(x?.time,'shortTime') }`,
+      x?.customerOrderStatus?.lookupNameEN?.lookupName,
+    ]));
+    let sections = [
+      {
+        heading: ['Customers Orders'],
+        data,
+        headers: ['ID', 'Customer Name', 'Customer Phone', 'Customer City', 'Category', 'Price', 'Fees', 'Company',
+          'Receiver Name', 'Receiver City', 'Created By', 'Created Date', 'Status'],
+      }
+    ];
+    this._excelService.exportToExcel(sections, 'Customers_Orders');
   }
   exportDriverWalletDetails(wallets: any[]) {
     let data = wallets.map(x => ([

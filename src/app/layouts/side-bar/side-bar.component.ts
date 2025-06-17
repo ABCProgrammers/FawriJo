@@ -18,7 +18,7 @@ export class SideBarComponent {
   isCollapsed = false;
   menuList = [];
   floatClass = {};
-  menuId = 0;
+  menuId = '';
   constructor(
     private _headerService: HeaderService,
     private _httpService: HttpService,
@@ -38,7 +38,15 @@ export class SideBarComponent {
   setMenus() {
     this.menuList = [
       {
-        id: 1,
+        id: 'dashboard',
+        name: 'Dashboard',
+        iconDark: '/assets/images/left-menu/dashboard.svg',
+        routeName: AppRoutes.Dashboard.Home,
+        hasSubMenu: false,
+        subMenu: []
+      },
+      {
+        id: 'system_settings',
         name: 'System Settings',
         iconDark: '/assets/images/left-menu/settings.svg',
         routeName: '',
@@ -51,7 +59,7 @@ export class SideBarComponent {
         ]
       },
       {
-        id: 2,
+        id: 'users',
         name: 'Users',
         iconDark: '/assets/images/left-menu/user-1.svg',
         routeName: AppRoutes.Users.Listing,
@@ -59,7 +67,7 @@ export class SideBarComponent {
         subMenu: []
       },
       {
-        id: 3,
+        id: 'customers',
         name: 'Customers',
         iconDark: '/assets/images/left-menu/user-1.svg',
         routeName: AppRoutes.Customers.Listing,
@@ -67,7 +75,7 @@ export class SideBarComponent {
         subMenu: []
       },
       {
-        id: 4,
+        id: 'customers_orders',
         name: 'Customer Orders',
         iconDark: '/assets/images/left-menu/user-1.svg',
         routeName: AppRoutes.Customers.Orders,
@@ -75,8 +83,8 @@ export class SideBarComponent {
         subMenu: []
       },
       {
-        id: 5,
-        name: 'Drivers Wallets',
+        id: 'drivers_cliq',
+        name: 'Drivers Cliq Transactions',
         iconDark: '/assets/images/left-menu/user-1.svg',
         routeName: AppRoutes.Drivers.Wallets,
         hasSubMenu: false,

@@ -7,6 +7,8 @@ import { HttpService } from '../../../../core/services/http.service';
 import { ActivatedRoute } from '@angular/router';
 import { ExportService } from '../../../../core/services/export.service';
 import { AppRoutes } from '../../../../shared/routes/appRoutes';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ChargeTransactionDetailsComponent } from '../charge-transaction-details/charge-transaction-details.component';
 
 @Component({
   selector: 'app-customer-wallet',
@@ -43,9 +45,10 @@ export class CustomerWalletComponent {
     private _httpService: HttpService,
     private _activeRoute: ActivatedRoute,
     private _exportService: ExportService,
+    private _modalService: NgbModal,
 
   ) {
-    this._headerService.setTitle('Customer Wallet');
+    this._headerService.setTitle('Drivers Cliq Transactions');
   }
   ngOnInit() {
     this.initTableColumns();
@@ -101,6 +104,11 @@ export class CustomerWalletComponent {
       },
     }).add(() => this._httpService._spinnerService.hide());
   }
+  handleChargeIdClick(row) {
+    if (!row?.driverChargeAccountID) return;
+    const ref = this._modalService.open(ChargeTransactionDetailsComponent, { size: 'lg' });
+    ref.componentInstance.data = { ...row };
+  }
   handleExportWalletClick() {
     this._exportService.exportDriverWalletDetails(this.dataList);
   }
@@ -124,7 +132,7 @@ export class CustomerWalletComponent {
   }
   initTableColumns() {
     this.tableColumns = [
-      { key: 'walletTransactionID', label: 'Wallet Transaction ID #' },
+      { key: 'walletTransactionID', label: 'Cliq Transaction ID #' },
       { key: 'dateTime', label: 'Transaction Date' },
       { key: 'transactionType.lookupNameEN.lookupName', label: 'Transaction Type' },
       { key: 'charge', label: 'Charge Transaction ID #' },

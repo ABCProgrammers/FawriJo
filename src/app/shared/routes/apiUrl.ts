@@ -59,5 +59,11 @@ export const ApiUrls = {
     EditOrder: 'Orders/EditOrder',
     GetOrders: 'Orders/GetOrders',
     DeleteOrders: 'Orders/DeleteOrders',
+    GetOrderStatusLog: 'Orders/GetOrderStatusLog',
+  },
+  Dashboard: {
+    GetOrdersCount: 'Dashboard/GetOrdersCount',
+    GetRegistrationsByYear: 'Dashboard/GetRegistrationsByYear',
+    GetCompanyIncome: 'Dashboard/GetCompanyIncome',
   },
 }

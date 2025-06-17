@@ -1,5 +1,71 @@
-<div class="row justify-content-center">
+<h6 class="text-color text-uppercase fw-600 font-14">Today Orders Statistics</h6>
+<!--Order Cards Start-->
+<div class="row mt-4">
+  <div class="col">
+    <div class="order-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="icon pending">
+          <img src="/assets/images/pending_o.svg" />
+        </div>
+        <h6 class="fw-700 font-24">{{ordersData?.pendingCount}}</h6>
+      </div>
+      <h6 class="text-color text-uppercase fw-600 font-14 mt-2">Pending Orders</h6>
+    </div>
+  </div>
+  <div class="col">
+    <div class="order-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="icon processing">
+          <img src="/assets/images/processing_o.svg" />
+        </div>
+        <h6 class="fw-700 font-24">{{ordersData?.preparingCount}}</h6>
+      </div>
+      <h6 class="text-color text-uppercase fw-600 font-14 mt-2">Processing Orders</h6>
+    </div>
+  </div>
+  <div class="col">
+    <div class="order-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="icon delivering">
+          <img src="/assets/images/delivering_o.svg" />
+        </div>
+        <h6 class="fw-700 font-24">{{ordersData?.deliveringCount}}</h6>
+      </div>
+      <h6 class="text-color text-uppercase fw-600 font-14 mt-2">Delivering Orders</h6>
+    </div>
+  </div>
+  <div class="col">
+    <div class="order-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="icon delivered">
+          <img src="/assets/images/delivered_o.svg" />
+        </div>
+        <h6 class="fw-700 font-24">{{ordersData?.deliveredCount}}</h6>
+      </div>
+      <h6 class="text-color text-uppercase fw-600 font-14 mt-2">Delivered Orders</h6>
+    </div>
+  </div>
+  <div class="col">
+    <div class="order-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="icon deleted">
+          <img src="/assets/images/deleted_o.svg" />
+        </div>
+        <h6 class="fw-700 font-24">{{ordersData?.deletedCount}}</h6>
+      </div>
+      <h6 class="text-color text-uppercase fw-600 font-14 mt-2">Deleted Orders</h6>
+    </div>
+  </div>
+</div>
+<!--Order Cards End-->
+<div class="row mt-4">
   <div class="col-6">
-    <h4 class="fw-600 text-center">Welcome Back</h4>
+    <app-registered-customers *ngIf="customersData" [data]="customersData" (eventData)="getCustomerEventData($event)"></app-registered-customers>
+  </div>
+  <div class="col-6">
+    <app-registered-drivers *ngIf="driversData" [data]="driversData" (eventData)="getDriverEventData($event)"></app-registered-drivers>
+  </div>
+  <div class="col-12 mt-4">
+    <app-income-chart *ngIf="incomeData" [data]="incomeData" (eventData)="getIncomeEventData($event)"></app-income-chart>
   </div>
 </div>

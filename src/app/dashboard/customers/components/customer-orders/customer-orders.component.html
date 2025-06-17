@@ -38,7 +38,7 @@
       <button type="button" (click)="toggleFilters()" class="btn btn-outline-dark white-bg">
         <i class="fa-solid fa-sliders"></i> Filter
       </button>
-      <button type="button" class="btn btn-outline-dark white-bg fw-400">
+      <button type="button" class="btn btn-outline-dark white-bg fw-400" (click)="handleExportCustomerOrdersClick()">
         <i class="fa-solid fa-download"></i> Export Customers Report
       </button>
     </div>
@@ -123,8 +123,15 @@
   </ng-template>
   <ng-template tableDataColumn="price" let-row="row">
       <div class="d-flex flex-column gap-2">
-        <span class="cb-clr fw-600">Price: {{row?.customerOrderPrice | number:'2.3-3'}} JOD</span>
-        <span class="cbs-clr font-12">Delivery Fees: {{row?.orderDeliveryFees | number:'2.3-3'}} JOD</span>
+        <span class="cb-clr fw-600">Price: {{row?.customerOrderPrice | number:'2.3-3'}}</span>
+        <span class="cbs-clr font-12">Delivery: {{row?.orderDeliveryFees | number:'2.3-3'}}</span>
+        <span class="cbs-clr font-12">Company: {{(row?.orderCompanyComission || 0) | number:'2.3-3'}}</span>
+      </div>
+  </ng-template>
+  <ng-template tableDataColumn="enterDate" let-row="row">
+      <div class="d-flex flex-column gap-2">
+        <span>{{(row?.enterDate) | date:'mediumDate'}}</span>
+        <span>{{(row?.time) | date:'shortTime'}}</span>
       </div>
   </ng-template>
   <ng-template tableDataColumn="status" let-row="row">

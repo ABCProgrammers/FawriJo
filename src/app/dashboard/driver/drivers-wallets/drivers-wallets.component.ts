@@ -7,7 +7,7 @@ import { TableConfig, TableColumn } from '../../../shared/components/data-table/
 import { AddDriverWalletAmountComponent } from '../components/add-driver-wallet-amount/add-driver-wallet-amount.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
-import { CustomerType } from '../../../shared/enums/enums';
+import { CustomerType, Status } from '../../../shared/enums/enums';
 import { ExportService } from '../../../core/services/export.service';
 @Component({
   selector: 'app-drivers-wallets',
@@ -27,7 +27,7 @@ export class DriversWalletsComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.3fr 1fr 1fr 1fr 1fr 1fr 1fr .5fr .4fr',
+    tableLayout: '.3fr 1fr 1fr .80fr 1fr 1.3fr .80fr .60fr .4fr',
   };
   tableColumns: TableColumn[] = [];
 
@@ -36,6 +36,7 @@ export class DriversWalletsComponent {
   transactionTypeList = [];
   filterParams;
   showFilter = false;
+  statusEnum = Status;
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
@@ -43,7 +44,7 @@ export class DriversWalletsComponent {
     private _modalService: NgbModal,
     private _exportService: ExportService,
   ) {
-    this._headerService.setTitle('Drivers Wallets');
+    this._headerService.setTitle('Drivers Cliq Transactions');
   }
   ngOnInit() {
     this.initTableColumns();
@@ -139,7 +140,7 @@ export class DriversWalletsComponent {
       { key: 'dateTime', label: 'Transaction Date' },
       { key: 'transactionFullName', label: 'Transaction By' },
       { key: 'transactionMobile', label: 'Transaction Mobile' },
-      { key: 'transactionAmount', label: 'Transaction Amount', currency: { decimalFormat: '2.3-3', appendText: ' JOD' } },
+      { key: 'transactionAmount', label: 'Transaction Amount (JOD)'},
       { key: 'attachment', label: 'Attachment' },
       { key: 'status', label: 'Status' },
       { key: 'action', label: 'Action' },

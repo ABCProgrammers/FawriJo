@@ -11,6 +11,7 @@ import { Status } from '../../../../shared/enums/enums';
 import { AppRoutes } from '../../../../shared/routes/appRoutes';
 import { EditOrderComponent } from '../edit-order/edit-order.component';
 import { OrderTrackingComponent } from '../order-tracking/order-tracking.component';
+import { ExportService } from '../../../../core/services/export.service';
 @Component({
   selector: 'app-customer-orders',
   templateUrl: './customer-orders.component.html',
@@ -29,7 +30,7 @@ export class CustomerOrdersComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.4fr 1.25fr .60fr 1fr 1fr 1fr .60fr .80fr .80fr .80fr 1.3fr',
+    tableLayout: '.6fr 1.25fr .60fr .70fr 1.2fr 1fr .60fr .85fr .80fr .80fr 1.35fr',
   };
   tableColumns: TableColumn[] = [];
 
@@ -49,7 +50,8 @@ export class CustomerOrdersComponent {
     private fb: FormBuilder,
     private _headerService: HeaderService,
     private _httpService: HttpService,
-    public _modalService: NgbModal,
+    private _modalService: NgbModal,
+    private _exportService: ExportService,
   ) {
     this._headerService.setTitle('Customers Orders');
   }
@@ -111,7 +113,7 @@ export class CustomerOrdersComponent {
   }
   handleOrderTrackingClick(row) {
     const modalRef = this._modalService.open(OrderTrackingComponent, { size: 'xl' });
-    modalRef.componentInstance.data = { ...row };
+    modalRef.componentInstance.data = { orderId: row?.customerOrderID};
   }
   handleOrderDetailsClick(row, from) {
     const modalRef = this._modalService.open(EditOrderComponent, { size: 'xl' });
@@ -128,10 +130,16 @@ export class CustomerOrdersComponent {
     let url = params && `${APIURL}${params}${defaultParams}` || `${APIURL}${defaultParams}`;
     this._httpService.get(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
-        this.dataList = response.data;
+        this.dataList = response.data.map(x => ({
+          ...x,
+          time: this._httpService._helperService.appendDateWithTime(x?.enterTime)
+        }));
         this.total = response?.info?.totalRecordsCount;
       },
     }).add(() => this._httpService._spinnerService.hide());
+  }
+  handleExportCustomerOrdersClick() {
+    this._exportService.exportCustomersOrders(this.dataList);
   }
   toggleFilters() {
     this.showFilter = !this.showFilter;
@@ -233,10 +241,10 @@ export class CustomerOrdersComponent {
       { key: 'fromCustomerID', label: 'Customer' },
       { key: 'fromCityID.lookupNameEN.lookupName', label: 'City' },
       { key: 'customerOrderCategoryID.lookupNameEN.lookupName', label: 'Category' },
-      { key: 'price', label: 'Price & Fees' },
+      { key: 'price', label: 'Price & Fees (JOD)' },
       { key: 'receiverName', label: 'Receiver Name' },
       { key: 'toCityID.lookupNameEN.lookupName', label: 'City' },
-      { key: 'enterDate', label: 'Created At', dateFormat: 'mediumDate' },
+      { key: 'enterDate', label: 'Created At' },
       { key: 'enterUser[0].fullName', label: 'Created By' },
       { key: 'status', label: 'Status' },
       { key: 'action', label: 'Action' },

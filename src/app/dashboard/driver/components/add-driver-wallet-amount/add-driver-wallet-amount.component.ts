@@ -48,7 +48,9 @@ export class AddDriverWalletAmountComponent {
       driverMobile: [''],
       transactionBy: [''],
       transactionMobile: [''],
-      amount: [''],
+      transactionAmount: [''],
+      taxAmount: [''],
+      totalAmount: [''],
       status: [''],
     });
     const data = this.data.row;
@@ -57,7 +59,9 @@ export class AddDriverWalletAmountComponent {
       driverMobile: data?.driverCustomerID[0]?.customerPhone,
       transactionBy: data?.transactionFullName,
       transactionMobile: data?.transactionMobile,
-      amount: data?.transactionAmount,
+      transactionAmount: data?.transactionAmount,
+      taxAmount: data?.transactionTaxAmount,
+      totalAmount: data?.transactionTotalAmount,
       status: data?.status?.lookupNameEN?.lookupName,
     }
     this.formGroup.patchValue(obj);

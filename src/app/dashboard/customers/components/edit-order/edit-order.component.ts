@@ -58,7 +58,8 @@ export class EditOrderComponent {
       orderStatus: [''], //Readonly
       customerOrderDesc: [''],
       customerOrderPrice: ['', Validators.required],
-      fees: [''], //Readonly
+      deliveryFees: [''],
+      commission: [''], //Readonly
       customerOrderComments: [''],
     });
     if (this.data?.edit || this.data?.view) {
@@ -80,12 +81,13 @@ export class EditOrderComponent {
         orderStatus: row?.customerOrderStatus?.lookupNameEN?.lookupName,
         customerOrderDesc: row?.customerOrderDesc,
         customerOrderPrice: row?.customerOrderPrice,
-        fees: row?.orderDeliveryFees,
+        deliveryFees: row?.orderDeliveryFees,
+        commission: row?.orderCompanyComission || 0,
         customerOrderComments: row?.customerOrderComments,
       }
       this.f.patchValue(obj);
       if (this.edit) {
-        let controls = ['senderName', 'senderMobile', 'toCountry', 'orderStatus', 'fees'];
+        let controls = ['senderName', 'senderMobile', 'toCountry', 'orderStatus','commission'];
         controls.forEach(x => {
           this.f.get(x).disable();
         })
@@ -128,7 +130,7 @@ export class EditOrderComponent {
     }
     const value = this.f.value;
     this._httpService._spinnerService.show();
-    let controls = ['senderName', 'senderMobile', 'receiverMobile', 'toCountry', 'orderStatus', 'fees'];
+    let controls = ['senderName', 'senderMobile', 'receiverMobile', 'toCountry', 'orderStatus'];
     const formData = this._httpService._helperService.convertFormGroupToFormData(this.f, controls);
     formData.append('receiverMobile', value.receiverMobile.e164Number);
     formData.append('customerOrderID', this.data?.row.customerOrderID);

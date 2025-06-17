@@ -45,7 +45,7 @@
     {{row?.enterDate | date:'mediumDate'}} {{row?.time | date:'shortTime'}}
   </ng-template>
   <ng-template tableDataColumn="charge" let-row="row">
-    <span class="text-decoration-underline primary-clr cursor-pointer">#{{row?.driverChargeAccountID}}</span>
+    <span class="text-decoration-underline primary-clr cursor-pointer" (click)="handleChargeIdClick(row)">#{{row?.driverChargeAccountID}}</span>
   </ng-template>
   <ng-template tableDataColumn="status" let-row="row">
     <div class="status-tag"

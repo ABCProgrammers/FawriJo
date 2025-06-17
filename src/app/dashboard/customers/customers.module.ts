@@ -10,6 +10,7 @@ import { CustomerWalletComponent } from './components/customer-wallet/customer-w
 import { EditOrderComponent } from './components/edit-order/edit-order.component';
 import { CustomerOrdersComponent } from './components/customer-orders/customer-orders.component';
 import { OrderTrackingComponent } from './components/order-tracking/order-tracking.component';
+import { ChargeTransactionDetailsComponent } from './components/charge-transaction-details/charge-transaction-details.component';
 @NgModule({
   declarations: [
     CustomersComponent,
@@ -19,6 +20,7 @@ import { OrderTrackingComponent } from './components/order-tracking/order-tracki
     EditOrderComponent,
     CustomerOrdersComponent,
     OrderTrackingComponent,
+    ChargeTransactionDetailsComponent,
   ],
   imports: [
     CommonModule,

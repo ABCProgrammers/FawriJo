@@ -78,6 +78,14 @@
       </div>
     </div>
   </ng-template>
+  <ng-template tableDataColumn="transactionAmount" let-row="row">
+    <div class="d-flex flex-column gap-2">
+      <span>Amount: {{(row?.transactionAmount) | number:'2.3-3'}}</span>
+      <span>Tax: {{(row?.transactionTaxAmount) | number:'2.3-3'}}</span>
+      <span>Total: {{(row?.transactionTotalAmount) | number:'2.3-3'}}</span>
+    </div>
+
+  </ng-template>
   <ng-template tableDataColumn="status" let-row="row">
     <div class="status-tag"
          [style.background-color]="row?.status?.lookupBGColor"
@@ -86,7 +94,7 @@
     </div>
   </ng-template>
   <ng-template tableDataColumn="action" let-row="row">
-    <div class="d-flex gap-1">
+    <div class="d-flex gap-1" *ngIf="row?.status?.lookupID == statusEnum.Active">
       <div class="table-actions wallet" (click)="handleAddClick(row)"><img src="/assets/images/wallet.svg" /> </div>
     </div>
   </ng-template>

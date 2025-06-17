@@ -151,6 +151,12 @@
       {{row?.fullName}}
     </div>
   </ng-template>
+  <ng-template tableDataColumn="loginStatus" let-row="row">
+    <div class="d-flex flex-column gap-2">
+      <span>Online: {{row?.customerOnline && 'Yes' || 'No'}}</span>
+      <span>Logged In: {{row?.customerLoggedIn && 'Yes' || 'No'}}</span>
+    </div>
+  </ng-template>
   <ng-template tableDataColumn="status" let-row="row">
     <div class="status-tag"
          [style.background-color]="row?.status?.lookupBGColor"
