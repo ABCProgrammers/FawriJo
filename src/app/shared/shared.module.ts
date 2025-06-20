@@ -28,6 +28,13 @@ import { ViewVideoModalComponent } from './components/view-video-modal/view-vide
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { ShowAttachmentsComponent } from './components/show-attachments/show-attachments.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
+import { TermsConditionsComponent } from './components/terms-conditions/terms-conditions.component';
+//import 'quill-emoji/dist/quill-emoji.js';
+//import * as Emoji from "quill-emoji";
+//import Quill from 'quill'
+//Quill.register("modules/emoji", Emoji);
+
 @NgModule({
   declarations: [
     ViewFileComponent,
@@ -46,6 +53,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     AddNewLookupComponent,
     ViewVideoModalComponent,
     ShowAttachmentsComponent,
+    PrivacyPolicyComponent,
+    TermsConditionsComponent,
   ],
   imports: [
     CommonModule,
@@ -60,7 +69,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     AngularSvgIconModule.forRoot(),
     TabsModule,
     QuillModule.forRoot(),
-    NgxSliderModule
+    NgxSliderModule,
   ],
   exports: [
     HttpClientModule,
@@ -88,7 +97,9 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     ViewVideoModalComponent,
     NgxSliderModule,
     ShowAttachmentsComponent,
-    NgxChartsModule
+    NgxChartsModule,
+    PrivacyPolicyComponent,
+    TermsConditionsComponent,
   ],
   providers: [
     DatePipe,

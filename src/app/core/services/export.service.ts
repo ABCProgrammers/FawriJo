@@ -40,22 +40,26 @@ export class ExportService {
       x?.fromCustomerID[0]?.fullName,
       x?.fromCustomerID[0]?.customerPhone,
       x?.fromCityID?.lookupNameEN?.lookupName,
+      x?.fromFullAddress,
       x?.customerOrderCategoryID?.lookupNameEN?.lookupName,
       `${this.currencyFormate(x?.customerOrderPrice)} JOD`,
       `${this.currencyFormate(x?.orderDeliveryFees)} JOD`,
       `${this.currencyFormate(x?.orderCompanyComission || 0)} JOD`,
       x?.receiverName,
       x?.toCityID?.lookupNameEN?.lookupName,
+      x?.toFullAddress,
       x?.enterUser[0]?.fullName,
       `${this.dateFormate(x?.enterDate)} ${this.dateFormate(x?.time,'shortTime') }`,
       x?.customerOrderStatus?.lookupNameEN?.lookupName,
+      x?.customerOrderComments,
+      x?.customerOrderDesc,
     ]));
     let sections = [
       {
         heading: ['Customers Orders'],
         data,
-        headers: ['ID', 'Customer Name', 'Customer Phone', 'Customer City', 'Category', 'Price', 'Fees', 'Company',
-          'Receiver Name', 'Receiver City', 'Created By', 'Created Date', 'Status'],
+        headers: ['ID', 'Customer Name', 'Customer Phone', 'Customer City', 'Customer Address', 'Category', 'Price', 'Fees', 'Company',
+          'Receiver Name', 'Receiver City','Receiver Address', 'Created By', 'Created Date', 'Status','Comments','Description'],
       }
     ];
     this._excelService.exportToExcel(sections, 'Customers_Orders');

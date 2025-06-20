@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import 'quill-emoji/dist/quill-emoji.js';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../core/services/http.service';
 import { ModalMessageComponent } from '../../../../shared/components/modal-message/modal-message.component';
+import { QuillModules } from 'ngx-quill';
 
 @Component({
   selector: 'app-send-customer-notificaion-modal',
@@ -17,6 +19,17 @@ export class SendCustomerNotificaionModalComponent {
   @Output() eventData = new EventEmitter();
   formGroup: FormGroup;
   minDate = new Date();
+  quillConfig: QuillModules = {
+    toolbar: {
+      container: [
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['emoji'] // Add 'emoji' to your toolbar options
+      ],
+    },
+    'emoji-toolbar': true,
+  };
   constructor(
     public _activeModal: NgbActiveModal,
     private fb: FormBuilder,
@@ -58,12 +71,14 @@ export class SendCustomerNotificaionModalComponent {
     time.updateValueAndValidity();
   }
   onQuillContentChanged(event) {
+    return;
     let value = this.formGroup.get('notificationText').value;
     if (!value) return;
     const delta = event.editor.editor.delta.ops;
     const converter = new QuillDeltaToHtmlConverter(delta as any, {});
     const html = converter.convert();
-    this.formGroup.get('notificationText').setValue(html);
+    console.log({ value, delta, html })
+    //this.formGroup.get('notificationText').setValue(html);
   }
   saveData() {
     if (this.formGroup.invalid) {

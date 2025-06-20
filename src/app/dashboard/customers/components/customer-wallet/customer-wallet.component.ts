@@ -9,6 +9,7 @@ import { ExportService } from '../../../../core/services/export.service';
 import { AppRoutes } from '../../../../shared/routes/appRoutes';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChargeTransactionDetailsComponent } from '../charge-transaction-details/charge-transaction-details.component';
+import { AddWalletAmountComponent } from './add-wallet-amount/add-wallet-amount.component';
 
 @Component({
   selector: 'app-customer-wallet',
@@ -48,7 +49,7 @@ export class CustomerWalletComponent {
     private _modalService: NgbModal,
 
   ) {
-    this._headerService.setTitle('Drivers Cliq Transactions');
+    this._headerService.setTitle('Driver Wallet');
   }
   ngOnInit() {
     this.initTableColumns();
@@ -108,6 +109,16 @@ export class CustomerWalletComponent {
     if (!row?.driverChargeAccountID) return;
     const ref = this._modalService.open(ChargeTransactionDetailsComponent, { size: 'lg' });
     ref.componentInstance.data = { ...row };
+  }
+  handleAddWalletAmountClick(row?) {
+    const modalRef = this._modalService.open(AddWalletAmountComponent, { size: 'md' });
+    modalRef.componentInstance.data = { driverId: this.driverId };
+    modalRef.componentInstance.eventData.subscribe(x => {
+      if (x) {
+        this.getDataList();
+        modalRef.dismiss();
+      }
+    })
   }
   handleExportWalletClick() {
     this._exportService.exportDriverWalletDetails(this.dataList);

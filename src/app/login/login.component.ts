@@ -23,6 +23,8 @@ export class LoginComponent {
   unsubscribe = new Subject<void>();
   formGroup: FormGroup;
   isPasswordVisible = false;
+  loginPage = true;
+  isPrivacy = false;
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -49,6 +51,15 @@ export class LoginComponent {
         this.router.navigateByUrl('/dashboard');
       }
     });
+  }
+  handlePrivacyClick(from) {
+    if (from == 'login') {
+      this.loginPage = true
+    }
+    else {
+      this.loginPage = false;
+      this.isPrivacy = from == 'privacy' ? true : false;
+    }
   }
   togglePasswordVisibility() {
     this.isPasswordVisible = !this.isPasswordVisible;

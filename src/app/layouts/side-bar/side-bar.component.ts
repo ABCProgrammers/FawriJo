@@ -19,6 +19,7 @@ export class SideBarComponent {
   menuList = [];
   floatClass = {};
   menuId = '';
+  appRoutes = AppRoutes;
   constructor(
     private _headerService: HeaderService,
     private _httpService: HttpService,

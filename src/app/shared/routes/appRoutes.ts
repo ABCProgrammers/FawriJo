@@ -20,5 +20,7 @@ export const AppRoutes = {
   },
   Drivers: {
     Wallets: '/drivers/wallets',
-  }
+  },
+  PrivacyPolicy:'/privacy-policy',
+  TermsConditions:'/term-and-conditions'
 }

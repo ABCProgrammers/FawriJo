@@ -29,7 +29,7 @@ export class MasterPagesComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.3fr 1fr 1fr .40fr .40fr',
+    tableLayout: '.3fr 1fr 1fr .40fr .25fr',
   };
   tableColumns: TableColumn[] = [];
   dataList = [];

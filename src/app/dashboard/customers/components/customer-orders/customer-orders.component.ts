@@ -113,7 +113,7 @@ export class CustomerOrdersComponent {
   }
   handleOrderTrackingClick(row) {
     const modalRef = this._modalService.open(OrderTrackingComponent, { size: 'xl' });
-    modalRef.componentInstance.data = { orderId: row?.customerOrderID};
+    modalRef.componentInstance.data = { orderId: row?.customerOrderID };
   }
   handleOrderDetailsClick(row, from) {
     const modalRef = this._modalService.open(EditOrderComponent, { size: 'xl' });
@@ -139,7 +139,16 @@ export class CustomerOrdersComponent {
     }).add(() => this._httpService._spinnerService.hide());
   }
   handleExportCustomerOrdersClick() {
-    this._exportService.exportCustomersOrders(this.dataList);
+    this._httpService._spinnerService.show();
+    let APIURL = `${this._httpService.apiUrl.Orders.GetOrders}?`;
+    let defaultParams = `&pageSize=${100000}&pageNo=${0}`;
+    let url = this.filterParams && `${APIURL}${this.filterParams}${defaultParams}` || `${APIURL}${defaultParams}`;
+    this._httpService.get(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        const dataList = response.data.map(x => ({ ...x, time: this._httpService._helperService.appendDateWithTime(x?.enterTime) }));
+        this._exportService.exportCustomersOrders(dataList);
+      },
+    }).add(() => this._httpService._spinnerService.hide());
   }
   toggleFilters() {
     this.showFilter = !this.showFilter;

@@ -137,6 +137,7 @@
   <ng-template tableDataColumn="status" let-row="row">
     <div class="status-tag"
          [style.background-color]="row?.customerOrderStatus?.lookupBGColor"
+         [ngStyle]="{'border':'1px solid' + row?.customerOrderStatus?.lookupTextColor}"
          [style.color]="row?.customerOrderStatus?.lookupTextColor">
       {{row?.customerOrderStatus?.lookupNameEN?.lookupName}}
     </div>

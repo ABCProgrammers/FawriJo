@@ -8,7 +8,8 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border-right:1px solid $border-color;
+    border-right: 1px solid $border-color;
+
     img {
       height: 100%;
     }
@@ -45,6 +46,12 @@
         font-size: 20px;
         font-weight: 300;
       }
+    }
+  }
+
+  ::ng-deep {
+    .ql-container {
+      height: auto;
     }
   }
 

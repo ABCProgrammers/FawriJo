@@ -99,6 +99,7 @@ export class AddMasterPageComponent {
       status: data?.status?.lookupID == 1001 ? true : false,
     }
     this.f.patchValue(obj);
+    this.f.get('masterPagesIdentifier').disable();
     let languages = data?.languages;
     this.languageList.forEach((lang, index) => {
       let langObj = languages[index];

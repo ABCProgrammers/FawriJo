@@ -84,7 +84,16 @@
       <span>Tax: {{(row?.transactionTaxAmount) | number:'2.3-3'}}</span>
       <span>Total: {{(row?.transactionTotalAmount) | number:'2.3-3'}}</span>
     </div>
-
+  </ng-template>
+  <ng-template tableDataColumn="attachment" let-row="row">
+    @if(row?.transactionImage){
+      <div class="cell-image">
+        <img [src]="row?.transactionImage"/>
+      </div>
+    }
+    @else{
+    ---
+    }
   </ng-template>
   <ng-template tableDataColumn="status" let-row="row">
     <div class="status-tag"
@@ -94,7 +103,7 @@
     </div>
   </ng-template>
   <ng-template tableDataColumn="action" let-row="row">
-    <div class="d-flex gap-1" *ngIf="row?.status?.lookupID == statusEnum.Active">
+    <div class="d-flex gap-1" [class.disable-elm]="row?.status?.lookupID !== statusEnum.Active">
       <div class="table-actions wallet" (click)="handleAddClick(row)"><img src="/assets/images/wallet.svg" /> </div>
     </div>
   </ng-template>

@@ -1,0 +1,6 @@
+<div class="row">
+  <div class="col-12">
+    <h6 class="fw-600 mb-3" [ngClass]="from == 'login' && 'font-28 text-center mt-4' || 'font-18'">Terms & Conditions</h6>
+    <quill-view-html [content]="data?.languages[0]?.masterPageText" [sanitize]="true"></quill-view-html>
+  </div>
+</div>

@@ -125,7 +125,15 @@ export class CustomersComponent {
       this.cityList = this.tempCityList;
   }
   handleExportCustomerClick() {
-    this._exportService.exportCustomers(this.dataList);
+    this._httpService._spinnerService.show();
+    let APIURL = `${this._httpService.apiUrl.Customers.GetCustomers}?`;
+    let defaultParams = `&pageSize=${100000}&pageNo=${0}`;
+    let url = this.filterParams && `${APIURL}${this.filterParams}${defaultParams}` || `${APIURL}${defaultParams}`;
+    this._httpService.get(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        this._exportService.exportCustomers(response.data);
+      },
+    }).add(() => this._httpService._spinnerService.hide());
   }
   handleMultiSelect(event) {
     this.multiSelectedItems = event.selectedItems;

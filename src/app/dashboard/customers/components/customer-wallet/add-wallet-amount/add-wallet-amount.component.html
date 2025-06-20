@@ -1,0 +1,19 @@
+<div class="modal-header justify-content-between align-items-center">
+  <h6 class="font-20 fw-600">Add Wallet Amount</h6>
+  <i class="fas fa-times cursor-pointer font-20 cbs-clr" (click)="_activeModal.close()"></i>
+</div>
+<div class="modal-body" ngbAutoFocus>
+    <div class="row">
+      <div class="col-12 mb-3">
+        <label class="input-label asterik">Amount to be added (JOD)</label>
+        <input type="text" [formControl]="amount" class="form-control input-control" decimalOnly placeholder="Amount to be added (JOD)" />
+        <validation-error [control]="amount" [errorMessages]="{required:'Input is required'}"></validation-error>
+      </div>
+    </div>
+</div>
+<div class="modal-footer border-top-0">
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-outline-dark" (click)="_activeModal.close()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="handleConfirmClick()">Add Amount</button>
+  </div>
+</div>
