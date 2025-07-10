@@ -7,6 +7,7 @@ import { LookupService } from '../../../../core/services/lookup.service';
 import { ModalMessageComponent } from '../../../../shared/components/modal-message/modal-message.component';
 import { matchControlsValidator } from '../../../../shared/validators/validator';
 import { CountryISO, PhoneNumberFormat, SearchCountryField } from 'ngx-intl-tel-input';
+import { Status } from '../../../../shared/enums/enums';
 @Component({
   selector: 'app-add-customer',
   templateUrl: './add-customer.component.html',
@@ -92,6 +93,7 @@ export class AddCustomerComponent {
         customerCity: row?.customerCity?.lookupID,
         customerLevelID: row?.customerLevel?.lookupID,
         businessCategoryID: row?.businessCategory?.lookupID,
+        status: row?.status?.lookupID == Status.Active ? true : false,
       };
       this.f.patchValue(obj);
       this.f.disable();
@@ -105,7 +107,7 @@ export class AddCustomerComponent {
     const business$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=17&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const city$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=3&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const type$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=26&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    forkJoin([country$, business$, city$,type$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
+    forkJoin([country$, business$, city$, type$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
       this.countryList = response[0].data;
       this.businessTypeList = response[1].data;
       this.cityList = response[2].data;

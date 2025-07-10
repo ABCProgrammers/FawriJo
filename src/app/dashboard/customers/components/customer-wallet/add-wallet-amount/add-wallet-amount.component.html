@@ -5,15 +5,15 @@
 <div class="modal-body" ngbAutoFocus>
     <div class="row">
       <div class="col-12 mb-3">
-        <label class="input-label asterik">Amount to be added (JOD)</label>
-        <input type="text" [formControl]="amount" class="form-control input-control" decimalOnly placeholder="Amount to be added (JOD)" />
-        <validation-error [control]="amount" [errorMessages]="{required:'Input is required'}"></validation-error>
+        <label class="input-label asterik">Amount to be added/deducted (JOD)</label>
+        <input type="number" [formControl]="amount" class="form-control input-control" placeholder="Amount to be added/deducted (JOD)" (blur)="handleAmountBlur($event)" />
+        <validation-error [control]="amount" [errorMessages]="{required:'Input is required',pattern:'Invalid amount'}"></validation-error>
       </div>
     </div>
 </div>
 <div class="modal-footer border-top-0">
   <div class="d-flex justify-content-end gap-2">
     <button type="button" class="btn btn-outline-dark" (click)="_activeModal.close()">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="handleConfirmClick()">Add Amount</button>
+    <button type="button" class="btn btn-primary" (click)="handleConfirmClick()">Save Amount</button>
   </div>
 </div>

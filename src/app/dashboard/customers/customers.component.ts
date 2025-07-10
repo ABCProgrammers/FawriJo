@@ -224,29 +224,27 @@ export class CustomersComponent {
   confirmDelete(row) {
     const modalRef = this._modalService.open(ConfirmModalComponent);
     modalRef.componentInstance.data = {
-      headingText: 'Update Status',
-      body: 'Are you sure you want to update the customer status?',
-      confirmText: 'Update',
+      headingText: 'Delete Customer',
+      body: 'Are you sure you want to delete this customer?',
+      confirmText: 'Delete',
       hideIcon: true,
     }
     modalRef.componentInstance.eventData.pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         if (response) {
-          this.updateStatus(row);
+          this.deleteCustomer(row);
         }
       }
     });
   }
-  updateStatus(row) {
+  deleteCustomer(row) {
     this._httpService._spinnerService.show();
-    let status = row?.status?.lookupID == Status.Active ? Status.InActive : Status.Active;
     const formData = new FormData();
-    formData.append('status', status.toString());
     formData.append('customerID', row?.customerID);
-    this._httpService.post(`${this._httpService.apiUrl.Customers.UpdateCustomerProfile}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
+    this._httpService.post(`${this._httpService.apiUrl.Customers.DeleteCustomer}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
       next: response => {
         if (response.isSuccess) {
-          this.responseModal('success', 'Data updated successfully!');
+          this.responseModal('success', 'Data deleted successfully!');
           this.pageNo = 1;
           this.getDataList();
         }

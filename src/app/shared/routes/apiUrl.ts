@@ -45,6 +45,7 @@ export const ApiUrls = {
     GetCustomers: 'Customers/GetCustomers',
     UpdateCustomerProfile: 'Customers/UpdateCustomerProfile',
     BlockCustomers: 'Customers/BlockCustomers',
+    DeleteCustomer: 'Customers/DeleteCustomer',
   },
   Notifications: {
     SendNotification: 'Notifications/SendNotification',
@@ -54,6 +55,7 @@ export const ApiUrls = {
     ViewDriverWalletDetails: 'Wallet/ViewDriverWalletDetails',
     AddMoneyToDriverWallet: 'Wallet/AddMoneyToDriverWallet',
     AddDriverWalletAmount: 'Wallet/AddDriverWalletAmount',
+    DeleteDriverReceivedAmount: 'Wallet/DeleteDriverReceivedAmount',
   },
   Orders: {
     AddOrder: 'Orders/AddOrder',

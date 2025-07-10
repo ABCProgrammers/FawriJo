@@ -15,7 +15,7 @@ export class AddWalletAmountComponent {
   destroy$ = new Subject<void>;
   @Input() data;
   @Output() eventData = new EventEmitter();
-  amount = new FormControl('', Validators.required);
+  amount = new FormControl('', [Validators.required, Validators.pattern(/^-?\d*(\.\d*)?$/)]);
   constructor(
     private _httpService: HttpService,
     private _modalService: NgbModal,
@@ -44,6 +44,7 @@ export class AddWalletAmountComponent {
     });
   }
   saveData() {
+    if (this.amount.invalid) return;
     this._httpService._spinnerService.show();
     const formData = new FormData();
     formData.append('customerID', this.data?.driverId);
@@ -60,6 +61,11 @@ export class AddWalletAmountComponent {
         this.responseModal('error', err[0].errorMessageEn || err[0].ErrorMessageEn || err?.info);
       }
     }).add(() => { this._httpService._spinnerService.hide() })
+  }
+  handleAmountBlur(event) {
+    if (event.target.value == '') return;
+    let value = +(event.target.value);
+    this.amount.setValue(value.toFixed(3));
   }
   responseModal(type, message) {
     const modalRef = this._modalService.open(ModalMessageComponent);

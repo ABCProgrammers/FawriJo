@@ -9,6 +9,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
 import { CustomerType, Status } from '../../../shared/enums/enums';
 import { ExportService } from '../../../core/services/export.service';
+import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
+import { ModalMessageComponent } from '../../../shared/components/modal-message/modal-message.component';
 @Component({
   selector: 'app-drivers-wallets',
   templateUrl: './drivers-wallets.component.html',
@@ -27,13 +29,13 @@ export class DriversWalletsComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.3fr 1fr 1fr .80fr 1fr 1.3fr .80fr .60fr .4fr',
+    tableLayout: '.3fr 1fr 1fr .80fr 1fr 1.3fr .60fr .60fr .6fr',
   };
   tableColumns: TableColumn[] = [];
 
   dataList = [];
   driversList = [];
-  transactionTypeList = [];
+  statusList = [];
   filterParams;
   showFilter = false;
   statusEnum = Status;
@@ -55,7 +57,7 @@ export class DriversWalletsComponent {
   initFilterForm() {
     this.filterForm = this.fb.group({
       driverCustomerID: [null],
-      type: [null],
+      status: [null],
       creationDate: [''],
     });
     this.filterForm.valueChanges.pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$)).subscribe((data) => {
@@ -76,10 +78,10 @@ export class DriversWalletsComponent {
   getLookups() {
     this._httpService._spinnerService.show();
     const drivers$ = this._httpService.get(`${this._httpService.apiUrl.Customers.GetCustomers}?customerLevelID=${CustomerType.Driver}&status=1001&pageSize=100000`).pipe(catchError(error => of(error)));
-    const transcType$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=20&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
-    forkJoin([drivers$, transcType$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
+    const status$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=1&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
+    forkJoin([drivers$, status$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
       this.driversList = response[0].data;
-      this.transactionTypeList = response[1].data;
+      this.statusList = response[1].data.filter(x => x.lookupID !== Status.Blocked);
       this.getDataList();
     })
   }
@@ -110,6 +112,44 @@ export class DriversWalletsComponent {
         this.total = response?.info?.totalRecordsCount;
       },
     }).add(() => this._httpService._spinnerService.hide());
+  }
+  confirmDelete(row) {
+    const modalRef = this._modalService.open(ConfirmModalComponent);
+    modalRef.componentInstance.data = {
+      headingText: 'Delete Transaction',
+      body: 'Are you sure you want to delete this transaction?',
+      confirmText: 'Delete',
+      hideIcon: true,
+    }
+    modalRef.componentInstance.eventData.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        if (response) {
+          this.deleteCustomer(row);
+        }
+      }
+    });
+  }
+  deleteCustomer(row) {
+    this._httpService._spinnerService.show();
+    const formData = new FormData();
+    formData.append('driverChargeAccountID', row?.driverChargeAccountID);
+    this._httpService.post(`${this._httpService.apiUrl.Wallet.DeleteDriverReceivedAmount}`, formData).pipe(takeUntil(this.destroy$)).subscribe({
+      next: response => {
+        if (response.isSuccess) {
+          this.responseModal('success', 'Data deleted successfully!');
+          this.pageNo = 1;
+          this.getDataList();
+        }
+      },
+      error: err => {
+        this.responseModal('error', err[0].errorMessageEn || err[0].ErrorMessageEn || err?.info);
+      }
+    }).add(() => { this._httpService._spinnerService.hide() })
+  }
+  responseModal(type, message) {
+    const modalRef = this._modalService.open(ModalMessageComponent);
+    modalRef.componentInstance.type = type;
+    modalRef.componentInstance.message = message;
   }
   toggleFilters() {
     this.showFilter = !this.showFilter;

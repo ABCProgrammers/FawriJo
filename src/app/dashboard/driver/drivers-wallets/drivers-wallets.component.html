@@ -12,8 +12,8 @@
           </ng-select>
         </div>
         <div class="col-6">
-          <ng-select [items]="transactionTypeList"
-                     formControlName="type"
+          <ng-select [items]="statusList"
+                     formControlName="status"
                      placeholder="Transaction Status"
                      bindLabel="lookupNameEN"
                      bindValue="lookupID"
@@ -87,9 +87,9 @@
   </ng-template>
   <ng-template tableDataColumn="attachment" let-row="row">
     @if(row?.transactionImage){
-      <div class="cell-image">
-        <img [src]="row?.transactionImage"/>
-      </div>
+    <div class="cell-image">
+      <img [src]="row?.transactionImage" />
+    </div>
     }
     @else{
     ---
@@ -103,8 +103,14 @@
     </div>
   </ng-template>
   <ng-template tableDataColumn="action" let-row="row">
-    <div class="d-flex gap-1" [class.disable-elm]="row?.status?.lookupID !== statusEnum.Active">
-      <div class="table-actions wallet" (click)="handleAddClick(row)"><img src="/assets/images/wallet.svg" /> </div>
+    <div class="d-flex gap-1">
+      <div class="table-actions wallet" [class.disable-elm]="row?.status?.lookupID !== statusEnum.Active"
+           (click)="handleAddClick(row)">
+        <img src="/assets/images/wallet.svg" />
+      </div>
+      <div (click)="confirmDelete(row)" class="table-actions delete" *ngIf="row?.status?.lookupID == statusEnum.Active">
+        <img src="/assets/images/trash.svg" />
+      </div>
     </div>
   </ng-template>
 </appDataTable>
