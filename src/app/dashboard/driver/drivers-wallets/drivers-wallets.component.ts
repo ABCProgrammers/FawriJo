@@ -11,6 +11,7 @@ import { CustomerType, Status } from '../../../shared/enums/enums';
 import { ExportService } from '../../../core/services/export.service';
 import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
 import { ModalMessageComponent } from '../../../shared/components/modal-message/modal-message.component';
+import { InLargeViewModalComponent } from '../../../shared/components/in-large-view-modal/in-large-view-modal.component';
 @Component({
   selector: 'app-drivers-wallets',
   templateUrl: './drivers-wallets.component.html',
@@ -29,7 +30,7 @@ export class DriversWalletsComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.3fr 1fr 1fr .80fr 1fr 1.3fr .60fr .60fr .6fr',
+    tableLayout: '.4fr 1fr 1fr .80fr 1fr 1.3fr .80fr .60fr .6fr',
   };
   tableColumns: TableColumn[] = [];
 
@@ -85,6 +86,11 @@ export class DriversWalletsComponent {
       this.getDataList();
     })
   }
+  handleAttachmentClick(row) {
+    const modalRef = this._modalService.open(InLargeViewModalComponent, { size: 'lg' });
+    modalRef.componentInstance.data = { file: row?.transactionImage, download:true };
+
+  }
   handleExportWalletClick() {
     this._exportService.exportDriversWallets(this.dataList);
   }
@@ -108,6 +114,7 @@ export class DriversWalletsComponent {
         this.dataList = response.data.map(x => ({
           ...x,
           time: this._httpService._helperService.appendDateWithTime(x?.enterTime),
+          attachmentType: this._httpService._helperService.getFileType(x?.transactionImage)
         }));
         this.total = response?.info?.totalRecordsCount;
       },

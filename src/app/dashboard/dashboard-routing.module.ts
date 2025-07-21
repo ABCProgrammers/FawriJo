@@ -7,7 +7,7 @@ import { TermsConditionsComponent } from "../shared/components/terms-conditions/
 const routes: Routes = [
   { path: "dashboard", component: DashboardComponent },
   { path: "privacy-policy", component: PrivacyPolicyComponent },
-  { path: "term-and-conditions", component: TermsConditionsComponent },
+  { path: "terms-and-conditions", component: TermsConditionsComponent },
   { path: "settings", loadChildren: () => import("./settings/settings.module").then((m) => m.SettingsModule) },
   { path: "master-pages", loadChildren: () => import("./master-pages/master-pages.module").then((m) => m.MasterPagesModule) },
   { path: "contact-info", loadChildren: () => import("./contacts-and-social-media/contacts-and-social-media.module").then((m) => m.ContactsAndSocialMediaModule) },

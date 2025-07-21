@@ -1,12 +1,26 @@
 <div class="modal-header justify-content-between align-items-center">
-  <h6 class="font-20 fw-600">{{data?.heading && data?.heading || 'In Large View'}}</h6>
+  <h6 class="font-20 fw-600">{{data?.heading && data?.heading || 'Attachment'}}</h6>
   <i class="fas fa-times cursor-pointer font-20 cbs-clr" (click)="_activeModal.close()"></i>
 </div>
 <div class="modal-body p-2">
   <ng-container *ngIf="data?.file">
-    <img class="w-100" [src]="data?.file" />
+    <ng-container [ngSwitch]="fileType">
+      <ng-container *ngSwitchCase="'pdf'">
+        <div class="d-flex justify-content-center flex-column align-items-center">
+          <img height="80" width="80" src="/assets/images/pdf.png" />
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchDefault>
+        <div class="img-wrapper">
+          <img class="w-100" [src]="data?.file" />
+        </div>
+      </ng-container>
+    </ng-container>
   </ng-container>
 </div>
-<div class="modal-footer">
+<div class="modal-footer d-flex gap-2">
+  <ng-container *ngIf="data?.download">
+    <a [attr.href]="(fileType == 'pdf') ? viewSrc : data?.file" target="_blank" class="d-flex align-items-center btn btn-primary">Download</a>
+  </ng-container>
   <button ngbAutoFocus type="button" class="btn btn-outline-dark" (click)="_activeModal.close('Close click')">Close</button>
 </div>

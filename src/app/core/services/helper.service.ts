@@ -13,6 +13,9 @@ export class HelperService {
     public _router: Router,
     public _location: Location,
   ) { }
+  getFileType(fileName) {
+    return fileName?.split('.').pop().trim().toLowerCase();
+  }
   dateFormate(input: Date, format?: any) {
     let value = !format && 'yyyy-MM-dd' || format;
     return this._datePipe.transform(input, value);

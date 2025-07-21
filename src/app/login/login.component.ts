@@ -10,6 +10,7 @@ import { HttpService } from '../core/services/http.service';
 import { ModalMessageComponent } from '../shared/components/modal-message/modal-message.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../shared/shared.module';
+import { AppRoutes } from '../shared/routes/appRoutes';
 
 
 @Component({
@@ -51,15 +52,6 @@ export class LoginComponent {
         this.router.navigateByUrl('/dashboard');
       }
     });
-  }
-  handlePrivacyClick(from) {
-    if (from == 'login') {
-      this.loginPage = true
-    }
-    else {
-      this.loginPage = false;
-      this.isPrivacy = from == 'privacy' ? true : false;
-    }
   }
   togglePasswordVisibility() {
     this.isPasswordVisible = !this.isPasswordVisible;

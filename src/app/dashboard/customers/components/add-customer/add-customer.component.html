@@ -48,7 +48,7 @@
               <view-file [customClass]="'mb-2'" remove="true" [data]="{isUploaded:true,uploadedFile:uploadProfileImage}" (removeFile)="removeFileHandle($event,inputFile,'profile')"></view-file>
             </ng-cotaniner>
             <ng-cotaniner *ngIf="profileImage">
-              <view-file [file]="profileImage"></view-file>
+              <view-file [file]="profileImage" download="true"></view-file>
             </ng-cotaniner>
           </div>
         </div>
@@ -145,7 +145,7 @@
               <view-file [customClass]="'mb-2'" remove="true" [data]="{isUploaded:true,uploadedFile:uploadCardImage}" (removeFile)="removeFileHandle($event,idCard,'card')"></view-file>
             </ng-cotaniner>
             <ng-cotaniner *ngIf="cardImage">
-              <view-file [file]="cardImage"></view-file>
+              <view-file [file]="cardImage" download="true"></view-file>
             </ng-cotaniner>
           </div>
         </div>
@@ -167,7 +167,7 @@
               <view-file [customClass]="'mb-2'" remove="true" [data]="{isUploaded:true,uploadedFile:uploadLicenseImage}" (removeFile)="removeFileHandle($event,license,'license')"></view-file>
             </ng-cotaniner>
             <ng-cotaniner *ngIf="licenseImage">
-              <view-file [file]="licenseImage"></view-file>
+              <view-file [file]="licenseImage" download="true"></view-file>
             </ng-cotaniner>
           </div>
         </div>

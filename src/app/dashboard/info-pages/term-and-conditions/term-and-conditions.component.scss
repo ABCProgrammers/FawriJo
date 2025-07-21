@@ -1,0 +1,74 @@
+@import '../../../../assets/scss/_variables.scss';
+@import '../../../../media-queries.scss';
+
+.login-wrapper {
+  .left-side {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-right: 1px solid $border-color;
+
+    img {
+      height: 100%;
+    }
+  }
+
+  .bg-white {
+    background-color: white;
+
+    .right-side {
+      .logo {
+        img {
+          height: 60px;
+        }
+      }
+
+      h1 {
+        font-size: 36px;
+        font-weight: 700;
+      }
+
+      .input-group {
+        i {
+          font-size: 20px;
+        }
+
+        .form-control {
+          height: 44px;
+          border-color: $border-color;
+        }
+      }
+
+      .btn {
+        height: 48px;
+        font-size: 20px;
+        font-weight: 300;
+      }
+    }
+  }
+
+  ::ng-deep {
+    .ql-container {
+      height: auto;
+    }
+  }
+
+  @include respond(null,'sm') {
+    height: 100vh;
+    align-items: center;
+    background: $white;
+  }
+
+  @include respond(null,'lg') {
+    .bg-white {
+
+      .right-side {
+        h1 {
+          font-size: 24px;
+        }
+      }
+    }
+  }
+}

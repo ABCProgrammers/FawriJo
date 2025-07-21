@@ -87,8 +87,8 @@
   </ng-template>
   <ng-template tableDataColumn="attachment" let-row="row">
     @if(row?.transactionImage){
-    <div class="cell-image">
-      <img [src]="row?.transactionImage" />
+    <div class="cell-image cursor-pointer" (click)="handleAttachmentClick(row)">
+      <img [src]="row?.attachmentType !== 'pdf' && row?.transactionImage || '/assets/images/pdf.png'" />
     </div>
     }
     @else{

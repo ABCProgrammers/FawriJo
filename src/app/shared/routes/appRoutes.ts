@@ -22,5 +22,5 @@ export const AppRoutes = {
     Wallets: '/drivers/wallets',
   },
   PrivacyPolicy:'/privacy-policy',
-  TermsConditions:'/term-and-conditions'
+  TermsConditions:'/terms-and-conditions'
 }
