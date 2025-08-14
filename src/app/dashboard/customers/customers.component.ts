@@ -57,7 +57,7 @@ export class CustomersComponent {
     private _modalService: NgbModal,
     private _exportService: ExportService,
   ) {
-    this._headerService.setTitle('Customers');
+    this._headerService.setTitle('Customers List');
   }
   ngOnInit() {
     this.initTableColumns();

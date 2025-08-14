@@ -27,10 +27,7 @@ export class AddCustomerComponent {
   uploadProfileImage;
   profileImage = '';
   uploadCardImage;
-  cardImage = '';
   uploadLicenseImage;
-  licenseImage = '';
-
   //Input Mobile Start
   separateDialCode = false;
   SearchCountryField = SearchCountryField;
@@ -83,11 +80,9 @@ export class AddCustomerComponent {
       status: [true],
     });
     if (this.data?.edit) {
-      let row = this.data.row;
+      let row = this.data?.row;
       this.f.patchValue(row);
       this.profileImage = row?.customerProfileImage;
-      this.cardImage = row?.idCardImage;
-      this.licenseImage = row?.licenseImage;
       let obj = {
         customerCountry: row?.customerCountry?.lookupID,
         customerCity: row?.customerCity?.lookupID,

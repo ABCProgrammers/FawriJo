@@ -52,7 +52,7 @@
             </ng-cotaniner>
           </div>
         </div>
-        <input type="file" id="upperImage" #inputFile accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,'profile')" hidden />
+        <input type="file" #inputFile accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,'profile')" hidden />
       </div>
       <div class="col-6 mb-3">
         <label class="input-label asterik">Mobile</label>
@@ -144,12 +144,15 @@
             <ng-cotaniner *ngIf="uploadCardImage?.file">
               <view-file [customClass]="'mb-2'" remove="true" [data]="{isUploaded:true,uploadedFile:uploadCardImage}" (removeFile)="removeFileHandle($event,idCard,'card')"></view-file>
             </ng-cotaniner>
-            <ng-cotaniner *ngIf="cardImage">
-              <view-file [file]="cardImage" download="true"></view-file>
-            </ng-cotaniner>
           </div>
         </div>
-        <input type="file" id="upperImage" #idCard accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,'card')" hidden />
+        <ng-cotaniner *ngIf="data?.row?.idCardImageFace1 || data?.row?.idCardImageFace2">
+          <label class="input-label mt-3">ID Card Image Face 1</label>
+          <view-file [customClass]="'mb-2'" [file]="data?.row?.idCardImageFace1" download="true"></view-file>
+          <label class="input-label">ID Card Image Face 2</label>
+          <view-file [file]="data?.row?.idCardImageFace2" download="true"></view-file>
+        </ng-cotaniner>
+        <input type="file" #idCard accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,'card')" hidden />
       </div>
       <!--LICENSE IMAGE-->
       <div class="col-6 mb-3">
@@ -166,12 +169,13 @@
             <ng-cotaniner *ngIf="uploadLicenseImage?.file">
               <view-file [customClass]="'mb-2'" remove="true" [data]="{isUploaded:true,uploadedFile:uploadLicenseImage}" (removeFile)="removeFileHandle($event,license,'license')"></view-file>
             </ng-cotaniner>
-            <ng-cotaniner *ngIf="licenseImage">
-              <view-file [file]="licenseImage" download="true"></view-file>
-            </ng-cotaniner>
           </div>
         </div>
-        <input type="file" id="upperImage" #license accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,'license')" hidden />
+        <ng-cotaniner *ngIf="data?.row?.licenseImage">
+          <label class="input-label mt-3">License Image</label>
+          <view-file [file]="data.row?.licenseImage" download="true"></view-file>
+        </ng-cotaniner>
+        <input type="file" #license accept=".png,.jpg,.jpeg,.svg" (change)="onFileChange($event,'license')" hidden />
       </div>
 
     </div>
