@@ -56,61 +56,78 @@
     </div>
   </app-card>
 </form>
-<appDataTable [config]="tableConfig"
-              [columns]="tableColumns"
-              [data]="dataList"
-              [page]="pageNo"
-              [total]="total"
-              [limit]="limit"
-              (pageUpdated)="onPageChange($event)">
-  <ng-template tableDataColumn="dateTime" let-row="row">
-    {{row?.enterDate | date:'mediumDate'}} {{row?.time | date:'shortTime'}}
-  </ng-template>
-  <ng-template tableDataColumn="customerName" let-row="row">
-    <div class="d-flex align-items-center gap-2">
-      <app-shape-card [imageUrl]="row?.customerProfileImage || '/assets/images/user-image.png'"
-                      [customClass]="''"
-                      [customStyles]="{borderRadius:'50%',height:'40px', width:'40px'}">
-      </app-shape-card>
+<app-card>
+  <div class="row mb-2">
+    <div class="col-2">
+      <div class="d-flex align-items-center page-size gap-2">
+        <label>Show</label>
+        <select (change)="handleChangePageSize($event)">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="100000">All</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <appDataTable [config]="tableConfig"
+                [columns]="tableColumns"
+                [data]="dataList"
+                [page]="pageNo"
+                [total]="total"
+                [limit]="limit"
+                (pageUpdated)="onPageChange($event)">
+    <ng-template tableDataColumn="dateTime" let-row="row">
+      {{row?.enterDate | date:'mediumDate'}} {{row?.time | date:'shortTime'}}
+    </ng-template>
+    <ng-template tableDataColumn="customerName" let-row="row">
+      <div class="d-flex align-items-center gap-2">
+        <app-shape-card [imageUrl]="row?.customerProfileImage || '/assets/images/user-image.png'"
+                        [customClass]="''"
+                        [customStyles]="{borderRadius:'50%',height:'40px', width:'40px'}">
+        </app-shape-card>
+        <div class="d-flex flex-column gap-2">
+          <span class="cb-clr fw-600">{{row?.driverCustomerID[0]?.fullName}}</span>
+          <span class="cbs-clr font-12">{{row?.driverCustomerID[0]?.customerPhone}}</span>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template tableDataColumn="transactionAmount" let-row="row">
       <div class="d-flex flex-column gap-2">
-        <span class="cb-clr fw-600">{{row?.driverCustomerID[0]?.fullName}}</span>
-        <span class="cbs-clr font-12">{{row?.driverCustomerID[0]?.customerPhone}}</span>
+        <span>Amount: {{(row?.transactionAmount) | number:'2.3-3'}}</span>
+        <span>Tax: {{(row?.transactionTaxAmount) | number:'2.3-3'}}</span>
+        <span>Total: {{(row?.transactionTotalAmount) | number:'2.3-3'}}</span>
       </div>
-    </div>
-  </ng-template>
-  <ng-template tableDataColumn="transactionAmount" let-row="row">
-    <div class="d-flex flex-column gap-2">
-      <span>Amount: {{(row?.transactionAmount) | number:'2.3-3'}}</span>
-      <span>Tax: {{(row?.transactionTaxAmount) | number:'2.3-3'}}</span>
-      <span>Total: {{(row?.transactionTotalAmount) | number:'2.3-3'}}</span>
-    </div>
-  </ng-template>
-  <ng-template tableDataColumn="attachment" let-row="row">
-    @if(row?.transactionImage){
-    <div class="cell-image cursor-pointer" (click)="handleAttachmentClick(row)">
-      <img [src]="row?.attachmentType !== 'pdf' && row?.transactionImage || '/assets/images/pdf.png'" />
-    </div>
-    }
-    @else{
-    ---
-    }
-  </ng-template>
-  <ng-template tableDataColumn="status" let-row="row">
-    <div class="status-tag"
-         [style.background-color]="row?.status?.lookupBGColor"
-         [style.color]="row?.status?.lookupTextColor">
-      {{row?.status?.lookupNameEN?.lookupName}}
-    </div>
-  </ng-template>
-  <ng-template tableDataColumn="action" let-row="row">
-    <div class="d-flex gap-1">
-      <div class="table-actions wallet" [class.disable-elm]="row?.status?.lookupID !== statusEnum.Active"
-           (click)="handleAddClick(row)">
-        <img src="/assets/images/wallet.svg" />
+    </ng-template>
+    <ng-template tableDataColumn="attachment" let-row="row">
+      @if(row?.transactionImage){
+      <div class="cell-image cursor-pointer" (click)="handleAttachmentClick(row)">
+        <img [src]="row?.attachmentType !== 'pdf' && row?.transactionImage || '/assets/images/pdf.png'" />
       </div>
-      <div (click)="confirmDelete(row)" class="table-actions delete" *ngIf="row?.status?.lookupID == statusEnum.Active">
-        <img src="/assets/images/trash.svg" />
+      }
+      @else{
+      ---
+      }
+    </ng-template>
+    <ng-template tableDataColumn="status" let-row="row">
+      <div class="status-tag"
+           [style.background-color]="row?.status?.lookupBGColor"
+           [style.color]="row?.status?.lookupTextColor">
+        {{row?.status?.lookupNameEN?.lookupName}}
       </div>
-    </div>
-  </ng-template>
-</appDataTable>
+    </ng-template>
+    <ng-template tableDataColumn="action" let-row="row">
+      <div class="d-flex gap-1">
+        <div class="table-actions wallet" [class.disable-elm]="row?.status?.lookupID !== statusEnum.Active"
+             (click)="handleAddClick(row)">
+          <img src="/assets/images/wallet.svg" />
+        </div>
+        <div (click)="confirmDelete(row)" class="table-actions delete" *ngIf="row?.status?.lookupID == statusEnum.Active">
+          <img src="/assets/images/trash.svg" />
+        </div>
+      </div>
+    </ng-template>
+  </appDataTable>
+</app-card>

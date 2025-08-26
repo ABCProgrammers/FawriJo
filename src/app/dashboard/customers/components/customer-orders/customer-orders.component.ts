@@ -46,6 +46,7 @@ export class CustomerOrdersComponent {
   statusEnum = Status;
   otherData;
   appRoutes = AppRoutes;
+  timeIntervalId;
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
@@ -59,6 +60,9 @@ export class CustomerOrdersComponent {
     this.initTableColumns();
     this.initFilterForm();
     this.getLookups();
+    this.timeIntervalId = this._httpService._helperService.timeInterval(() => {
+      this.getDataList();
+    }, 120000);
   }
 
   initFilterForm() {
@@ -124,7 +128,7 @@ export class CustomerOrdersComponent {
     })
   }
   getDataList(params?) {
-    params && this._httpService._spinnerService.show();
+    this._httpService._spinnerService.show();
     let APIURL = `${this._httpService.apiUrl.Orders.GetOrders}?`;
     let defaultParams = `&pageSize=${this.limit}&pageNo=${this.pageNo - 1}`;
     let url = params && `${APIURL}${params}${defaultParams}` || `${APIURL}${defaultParams}`;
@@ -264,5 +268,6 @@ export class CustomerOrdersComponent {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.timeIntervalId.stop();
   }
 }

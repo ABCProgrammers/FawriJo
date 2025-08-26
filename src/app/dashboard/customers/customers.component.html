@@ -10,21 +10,18 @@
     <div class="col-4">
       <div class="row">
         <div class="col-6">
+          <div class="myinput-group">
+            <span class="left"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search by phone" formControlName="phoneNumber" />
+            <span *ngIf="filterForm.get('phoneNumber').value" class="right"><i (click)="resetControlValue('phoneNumber')" class="cursor-pointer fas fa-times"></i></span>
+          </div>
+        </div>
+        <div class="col-6">
           <ng-select [items]="statusList"
                      formControlName="status"
                      placeholder="Status"
                      bindLabel="lookupNameEN"
                      bindValue="lookupID"
-                     class="ng-select-filter">
-          </ng-select>
-        </div>
-        <div class="col-6">
-          <ng-select [items]="countryList"
-                     formControlName="country"
-                     placeholder="Country"
-                     bindLabel="lookupNameEN"
-                     bindValue="lookupID"
-                     (change)="handleCountryChange($event)"
                      class="ng-select-filter">
           </ng-select>
         </div>
@@ -44,6 +41,17 @@
   </div>
   <app-card class="mb-4" *ngIf="showFilter">
     <div class="row">
+      <div class="col-4 mb-3">
+        <label class="input-label">Country</label>
+        <ng-select [items]="countryList"
+                   formControlName="country"
+                   placeholder="Country"
+                   bindLabel="lookupNameEN"
+                   bindValue="lookupID"
+                   (change)="handleCountryChange($event)"
+                   class="ng-select-filter">
+        </ng-select>
+      </div>
       <div class="col-4 mb-3">
         <label class="input-label">City</label>
         <ng-select [items]="cityList"
@@ -118,62 +126,85 @@
     </div>
   </app-card>
 </form>
-<appDataTable [config]="tableConfig"
-              [columns]="tableColumns"
-              [data]="dataList"
-              [otherData]="otherData"
-              [page]="pageNo"
-              [total]="total"
-              [limit]="limit"
-              (sortUpdated)="onSortChange($event)"
-              (multiSelected)="handleMultiSelect($event)"
-              (pageUpdated)="onPageChange($event)">
-  <!--Headers-->
-  <ng-template tableHeadColumn="action" let-row="row">
-    <div class="d-flex align-items-center justify-content-between flex-grow-1">
-      <label>Action</label>
-      <div ngbDropdown class="d-inline-block table-action-dropdown" *ngIf="multiSelectedItems.length">
-        <i class="fa-solid fa-ellipsis-vertical cursor-pointer font-20" ngbDropdownToggle></i>
-        <div ngbDropdownMenu class="dropdown-menu-end">
-          <button ngbDropdownItem type="button" *ngIf="!isBlockedStatus" (click)="handleMultiActionClick('block')">Block Customer</button>
-          <button ngbDropdownItem type="button" (click)="handleMultiActionClick('notification')">Send Notification</button>
+<app-card>
+  <div class="row mb-2">
+    <div class="col-2">
+      <div class="d-flex align-items-center page-size gap-2">
+        <label>Show</label>
+        <select (change)="handleChangePageSize($event)">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="100000">All</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <appDataTable [config]="tableConfig"
+                [columns]="tableColumns"
+                [data]="dataList"
+                [otherData]="otherData"
+                [page]="pageNo"
+                [total]="total"
+                [limit]="limit"
+                (sortUpdated)="onSortChange($event)"
+                (multiSelected)="handleMultiSelect($event)"
+                (pageUpdated)="onPageChange($event)">
+    <!--Headers-->
+    <ng-template tableHeadColumn="action" let-row="row">
+      <div class="d-flex align-items-center justify-content-between flex-grow-1">
+        <label>Action</label>
+        <div ngbDropdown class="d-inline-block table-action-dropdown" *ngIf="multiSelectedItems.length">
+          <i class="fa-solid fa-ellipsis-vertical cursor-pointer font-20" ngbDropdownToggle></i>
+          <div ngbDropdownMenu class="dropdown-menu-end">
+            <button ngbDropdownItem type="button" *ngIf="!isBlockedStatus" (click)="handleMultiActionClick('block')">Block Customer</button>
+            <button ngbDropdownItem type="button" (click)="handleMultiActionClick('notification')">Send Notification</button>
+          </div>
         </div>
       </div>
-    </div>
-  </ng-template>
-  <!--Data-->
-  <ng-template tableDataColumn="customerName" let-row="row">
-    <div class="d-flex align-items-center gap-2">
-      <app-shape-card [imageUrl]="row?.customerProfileImage || '/assets/images/user-image.png'"
-                      [customClass]="''"
-                      [customStyles]="{borderRadius:'50%',height:'40px', width:'40px'}">
-      </app-shape-card>
-      {{row?.fullName}}
-    </div>
-  </ng-template>
-  <ng-template tableDataColumn="loginStatus" let-row="row">
-    <div class="d-flex flex-column gap-2">
-      <span>Online: {{row?.customerOnline && 'Yes' || 'No'}}</span>
-      <span>Logged In: {{row?.customerLoggedIn && 'Yes' || 'No'}}</span>
-    </div>
-  </ng-template>
-  <ng-template tableDataColumn="status" let-row="row">
-    <div class="status-tag"
-         [style.background-color]="row?.status?.lookupBGColor"
-         [style.color]="row?.status?.lookupTextColor">
-      {{row?.status?.lookupNameEN?.lookupName}}
-    </div>
-  </ng-template>
-  <ng-template tableDataColumn="action" let-row="row">
-    <div class="d-flex gap-1">
-      <div *ngIf="customerType.Driver == row?.customerLevel?.lookupID" class="table-actions wallet"
-           [routerLink]="appRoutes.Customers.Wallet" [queryParams]="{id:row?.customerID,name:row?.fullName}"><img src="/assets/images/wallet.svg" /> </div>
-      <div (click)="handleAddClick(row)" class="table-actions edit">
-        <img src="/assets/images/edit.svg" />
+    </ng-template>
+    <!--Data-->
+    <ng-template tableDataColumn="customerName" let-row="row">
+      <div class="d-flex align-items-center gap-2">
+        <app-shape-card [imageUrl]="row?.customerProfileImage || '/assets/images/user-image.png'"
+                        [customClass]="''"
+                        [customStyles]="{borderRadius:'50%',height:'40px', width:'40px'}">
+        </app-shape-card>
+        {{row?.fullName}}
       </div>
-      <div (click)="confirmDelete(row)" class="table-actions delete">
-        <img src="/assets/images/trash.svg" />
+    </ng-template>
+    <ng-template tableDataColumn="business" let-row="row">
+      <div class="d-flex flex-column gap-2">
+        <span>{{row?.businessCategory?.lookupNameEN?.lookupName}}</span>
+        <span>{{row?.companyName}}</span>
       </div>
-    </div>
-  </ng-template>
-</appDataTable>
+    </ng-template>
+    <ng-template tableDataColumn="loginStatus" let-row="row">
+      <div class="d-flex flex-column gap-2">
+        <span>Online: {{row?.customerOnline && 'Yes' || 'No'}}</span>
+        <span>Logged In: {{row?.customerLoggedIn && 'Yes' || 'No'}}</span>
+      </div>
+    </ng-template>
+    <ng-template tableDataColumn="status" let-row="row">
+      <div class="status-tag"
+           [style.background-color]="row?.status?.lookupBGColor"
+           [style.color]="row?.status?.lookupTextColor">
+        {{row?.status?.lookupNameEN?.lookupName}}
+      </div>
+    </ng-template>
+    <ng-template tableDataColumn="action" let-row="row">
+      <div class="d-flex gap-1">
+        <div *ngIf="customerType.Driver == row?.customerLevel?.lookupID" class="table-actions wallet"
+             [routerLink]="appRoutes.Customers.Wallet" [queryParams]="{id:row?.customerID,name:row?.fullName}"><img src="/assets/images/wallet.svg" /> </div>
+        <div (click)="handleAddClick(row)" class="table-actions edit">
+          <img src="/assets/images/edit.svg" />
+        </div>
+        <div (click)="confirmDelete(row)" class="table-actions delete">
+          <img src="/assets/images/trash.svg" />
+        </div>
+      </div>
+    </ng-template>
+  </appDataTable>
+</app-card>

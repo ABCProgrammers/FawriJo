@@ -42,7 +42,7 @@ export class ViewFileComponent {
 
   }
   openFileModal() {
-    const ref = this._modalService.open(ViewUploadedFileComponent);
+    const ref = this._modalService.open(ViewUploadedFileComponent, { keyboard: true});
     if (this.data?.isUploaded) {
       ref.componentInstance.data = this.data;
     }

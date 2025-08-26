@@ -43,7 +43,7 @@ export function tokenGetter() {
 export class AppModule {
   constructor(configModal: NgbModalConfig, _datePicker: BsDatepickerConfig, _dateRangePicker: BsDaterangepickerConfig) {
     configModal.backdrop = "static";
-    configModal.keyboard = false;
+    configModal.keyboard = true;
     configModal.centered = true;
     configModal.scrollable = true;
 

@@ -16,6 +16,7 @@ export class DashboardComponent {
   incomeData;
   ordersData;
   dataList = [];
+  timeIntervalId;
   constructor(
     private headerService: HeaderService,
     private _httpService: HttpService,
@@ -25,6 +26,9 @@ export class DashboardComponent {
   ngOnInit(): void {
     this.headerService.setTitle('Dashboard');
     this.getData();
+    this.timeIntervalId = this._httpService._helperService.timeInterval(() => {
+      this.getData();
+    }, 120000);
   }
   getData() {
     this._httpService._spinnerService.show();
@@ -76,5 +80,6 @@ export class DashboardComponent {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.timeIntervalId.stop();
   }
 }

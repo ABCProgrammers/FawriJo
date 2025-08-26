@@ -40,6 +40,7 @@ export class DriversWalletsComponent {
   filterParams;
   showFilter = false;
   statusEnum = Status;
+  timeIntervalId;
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
@@ -53,6 +54,9 @@ export class DriversWalletsComponent {
     this.initTableColumns();
     this.initFilterForm();
     this.getLookups();
+    this.timeIntervalId = this._httpService._helperService.timeInterval(() => {
+      this.getDataList();
+    }, 120000);
   }
 
   initFilterForm() {
@@ -105,7 +109,7 @@ export class DriversWalletsComponent {
     })
   }
   getDataList(params?) {
-    params && this._httpService._spinnerService.show();
+    this._httpService._spinnerService.show();
     let APIURL = `${this._httpService.apiUrl.Wallet.ViewDriverReceivedAmounts}?`;
     let defaultParams = `&pageSize=${this.limit}&pageNo=${this.pageNo - 1}`;
     let url = params && `${APIURL}${params}${defaultParams}` || `${APIURL}${defaultParams}`;
@@ -196,5 +200,6 @@ export class DriversWalletsComponent {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.timeIntervalId.stop();
   }
 }

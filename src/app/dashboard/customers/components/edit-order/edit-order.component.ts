@@ -46,6 +46,7 @@ export class EditOrderComponent {
     this.formGroup = this.fb.group({
       senderName: [''], //Readonly
       senderMobile: [''], //Readonly
+      companyName: [''], //Readonly
       fromCountryID: [null, Validators.required],
       fromCityID: [null, Validators.required],
       fromFullAddress: [''],
@@ -61,6 +62,7 @@ export class EditOrderComponent {
       deliveryFees: [''],
       commission: [''], //Readonly
       customerOrderComments: [''],
+      secretCode: [''], //Readonly
     });
     if (this.data?.edit || this.data?.view) {
       let row = this.data.row;
@@ -69,6 +71,7 @@ export class EditOrderComponent {
       let obj = {
         senderName: row?.fromCustomerID[0]?.fullName,
         senderMobile: row?.fromCustomerID[0]?.customerPhone,
+        companyName: row?.fromCustomerID[0]?.companyName,
         fromCountryID: row?.fromCountryID?.lookupID,
         fromCityID: row?.fromCityID?.lookupID,
         fromFullAddress: row?.fromFullAddress,
@@ -84,10 +87,11 @@ export class EditOrderComponent {
         deliveryFees: row?.orderDeliveryFees,
         commission: row?.orderCompanyComission || 0,
         customerOrderComments: row?.customerOrderComments,
+        secretCode: row?.customerOrderSecretCode,
       }
       this.f.patchValue(obj);
       if (this.edit) {
-        let controls = ['senderName', 'senderMobile', 'toCountry', 'orderStatus','commission'];
+        let controls = ['senderName', 'senderMobile', 'toCountry', 'companyName', 'orderStatus', 'commission','secretCode'];
         controls.forEach(x => {
           this.f.get(x).disable();
         })
@@ -130,7 +134,7 @@ export class EditOrderComponent {
     }
     const value = this.f.value;
     this._httpService._spinnerService.show();
-    let controls = ['senderName', 'senderMobile', 'receiverMobile', 'toCountry', 'orderStatus'];
+    let controls = ['senderName', 'senderMobile', 'companyName', 'receiverMobile', 'toCountry', 'orderStatus','secretCode'];
     const formData = this._httpService._helperService.convertFormGroupToFormData(this.f, controls);
     formData.append('receiverMobile', value.receiverMobile.e164Number);
     formData.append('customerOrderID', this.data?.row.customerOrderID);

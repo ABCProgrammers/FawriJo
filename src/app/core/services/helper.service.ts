@@ -13,6 +13,12 @@ export class HelperService {
     public _router: Router,
     public _location: Location,
   ) { }
+  timeInterval(callback: () => void, time: number = 60000) {
+    const intervalId = setInterval(callback, time);
+    return {
+      stop: () => clearInterval(intervalId)
+    };
+  }
   getFileType(fileName) {
     return fileName?.split('.').pop().trim().toLowerCase();
   }

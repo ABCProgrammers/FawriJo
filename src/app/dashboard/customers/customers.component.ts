@@ -50,6 +50,7 @@ export class CustomersComponent {
   customerType = CustomerType;
   multiSelectedItems = [];
   isBlockedStatus = false;
+  timeIntervalId;
   constructor(
     private fb: FormBuilder,
     private _headerService: HeaderService,
@@ -63,11 +64,15 @@ export class CustomersComponent {
     this.initTableColumns();
     this.initFilterForm();
     this.getLookups();
+    this.timeIntervalId = this._httpService._helperService.timeInterval(() => {
+      this.getDataList();
+    }, 120000);
   }
 
   initFilterForm() {
     this.filterForm = this.fb.group({
       customerFullName: [''],
+      phoneNumber: [''],
       status: [null],
       country: [null],
       city: [null],
@@ -97,7 +102,7 @@ export class CustomersComponent {
       }
       delete formValues.lastSeen;
       this.filterParams = new URLSearchParams(formValues).toString();
-      this.getDataList(this.filterParams);
+      this.getDataList();
     });
   }
   getLookups() {
@@ -201,11 +206,11 @@ export class CustomersComponent {
       modalRef.dismiss();
     })
   }
-  getDataList(params?) {
-    params && this._httpService._spinnerService.show();
+  getDataList() {
+    this._httpService._spinnerService.show();
     let APIURL = `${this._httpService.apiUrl.Customers.GetCustomers}?`;
     let defaultParams = `&pageSize=${this.limit}&pageNo=${this.pageNo - 1}`;
-    let url = params && `${APIURL}${params}${defaultParams}` || `${APIURL}${defaultParams}`;
+    let url = this.filterParams && `${APIURL}${this.filterParams}${defaultParams}` || `${APIURL}${defaultParams}`;
     this._httpService.get(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         this.dataList = response.data;
@@ -275,7 +280,7 @@ export class CustomersComponent {
   onPageChange(page: number) {
     this.multiSelectedItems.length && this.clearSelectedRow();
     this.pageNo = page;
-    this.getDataList(this.filterParams);
+    this.getDataList();
   }
   onSortChange(sort: any) {
     if (sort?.direction && sort?.column) {
@@ -307,7 +312,7 @@ export class CustomersComponent {
     } else {
       this.tableConfig.filter.Sort = 1;
     }
-    this.getDataList(this.filterParams);
+    this.getDataList();
   }
   initTableColumns() {
     this.tableColumns = [
@@ -315,7 +320,7 @@ export class CustomersComponent {
       { key: 'customerName', label: 'Full Name' },
       { key: 'customerPhone', label: 'Phone' },
       { key: 'customerLevel.lookupNameEN.lookupName', label: 'Type' },
-      { key: 'businessCategory.lookupNameEN.lookupName', label: 'Business' },
+      { key: 'business', label: 'Business' },
       { key: 'customerCountry.lookupNameEN.lookupName', label: 'Country' },
       { key: 'customerCity.lookupNameEN.lookupName', label: 'City' },
       { key: 'loginStatus', label: 'Login Status' },
@@ -326,5 +331,6 @@ export class CustomersComponent {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.timeIntervalId.stop();
   }
 }
