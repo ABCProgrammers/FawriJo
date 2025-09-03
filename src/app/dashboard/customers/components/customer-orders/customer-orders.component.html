@@ -153,6 +153,7 @@
     </ng-template>
     <ng-template tableDataColumn="enterDate" let-row="row">
       <div class="d-flex flex-column gap-2">
+        <span>{{row?.enterUser[0]?.fullName}}</span>
         <span>{{(row?.enterDate) | date:'mediumDate'}}</span>
         <span>{{(row?.time) | date:'shortTime'}}</span>
       </div>
@@ -169,6 +170,7 @@
       <div class="d-flex gap-1">
         <div class="table-actions wallet" (click)="handleOrderDetailsClick(row,'view')"><i class="primary-clr fas fa-eye"></i> </div>
         <div class="table-actions view" (click)="handleOrderTrackingClick(row)"><img src="/assets/images/tracking.svg" /> </div>
+        <div class="table-actions update" (click)="handleUpdateStatusClick(row)"><svg-icon src="/assets/images/update.svg"> </svg-icon> </div>
         <div (click)="handleOrderDetailsClick(row,'edit')" class="table-actions edit">
           <img src="/assets/images/edit.svg" />
         </div>

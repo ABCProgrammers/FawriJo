@@ -12,6 +12,7 @@ import { AppRoutes } from '../../../../shared/routes/appRoutes';
 import { EditOrderComponent } from '../edit-order/edit-order.component';
 import { OrderTrackingComponent } from '../order-tracking/order-tracking.component';
 import { ExportService } from '../../../../core/services/export.service';
+import { UpdateOrderStatusComponent } from './update-order-status/update-order-status.component';
 @Component({
   selector: 'app-customer-orders',
   templateUrl: './customer-orders.component.html',
@@ -30,7 +31,7 @@ export class CustomerOrdersComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.6fr 1.25fr .60fr .70fr 1.2fr 1fr .60fr .85fr .80fr .80fr 1.35fr',
+    tableLayout: '.6fr 1.25fr .60fr .70fr 1.2fr 1fr .60fr .85fr .80fr 1.60fr',
   };
   tableColumns: TableColumn[] = [];
 
@@ -106,7 +107,7 @@ export class CustomerOrdersComponent {
       this.customerList = response[4].data;
       this.getDataList();
     })
-  }
+  } 
   handleCountryChange(event) {
     this.filterForm.get('fromCityID').setValue(null);
     this.filterForm.get('toCityID').setValue(null);
@@ -118,6 +119,14 @@ export class CustomerOrdersComponent {
   handleOrderTrackingClick(row) {
     const modalRef = this._modalService.open(OrderTrackingComponent, { size: 'xl' });
     modalRef.componentInstance.data = { orderId: row?.customerOrderID };
+  }
+  handleUpdateStatusClick(row) {
+    const modalRef = this._modalService.open(UpdateOrderStatusComponent, { size: 'md' });
+    modalRef.componentInstance.data = { orderId: row?.customerOrderID };
+    modalRef.componentInstance.eventData.subscribe(x => {
+      this.getDataList();
+      modalRef.dismiss();
+    })
   }
   handleOrderDetailsClick(row, from) {
     const modalRef = this._modalService.open(EditOrderComponent, { size: 'xl' });
@@ -257,8 +266,7 @@ export class CustomerOrdersComponent {
       { key: 'price', label: 'Price & Fees (JOD)' },
       { key: 'receiverName', label: 'Receiver Name' },
       { key: 'toCityID.lookupNameEN.lookupName', label: 'City' },
-      { key: 'enterDate', label: 'Created At' },
-      { key: 'enterUser[0].fullName', label: 'Created By' },
+      { key: 'enterDate', label: 'Created' },
       { key: 'status', label: 'Status' },
       { key: 'action', label: 'Action' },
     ];

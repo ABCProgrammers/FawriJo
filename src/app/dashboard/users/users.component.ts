@@ -73,7 +73,7 @@ export class UsersComponent {
     const status$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=1&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     const userType$ = this._httpService.get(`${this._httpService.apiUrl.Lookup.GetLookups}?lookupTypeId=41&status=1001&pageSize=1000`).pipe(catchError(error => of(error)));
     forkJoin([status$, userType$]).pipe(takeUntil(this.destroy$)).subscribe((response) => {
-      this.statusList = response[0].data.filter(x => x.lookupID == Status.Active || x.lookupID == Status.InActive);;
+      this.statusList = response[0].data.filter(x => x.lookupID == Status.Active || x.lookupID == Status.InActive || x.lookupID == Status.Deleted);
       this.userTypeList = response[1].data;
 
     }).add(() => this._httpService._spinnerService.hide());

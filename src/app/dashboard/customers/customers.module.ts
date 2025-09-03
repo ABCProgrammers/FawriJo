@@ -12,6 +12,7 @@ import { CustomerOrdersComponent } from './components/customer-orders/customer-o
 import { OrderTrackingComponent } from './components/order-tracking/order-tracking.component';
 import { ChargeTransactionDetailsComponent } from './components/charge-transaction-details/charge-transaction-details.component';
 import { AddWalletAmountComponent } from './components/customer-wallet/add-wallet-amount/add-wallet-amount.component';
+import { UpdateOrderStatusComponent } from './components/customer-orders/update-order-status/update-order-status.component';
 @NgModule({
   declarations: [
     CustomersComponent,
@@ -23,6 +24,7 @@ import { AddWalletAmountComponent } from './components/customer-wallet/add-walle
     OrderTrackingComponent,
     ChargeTransactionDetailsComponent,
     AddWalletAmountComponent,
+    UpdateOrderStatusComponent,
   ],
   imports: [
     CommonModule,

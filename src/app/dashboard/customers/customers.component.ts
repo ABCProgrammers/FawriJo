@@ -117,7 +117,7 @@ export class CustomersComponent {
       this.businessTypeList = response[1].data;
       this.cityList = response[2].data;
       this.tempCityList = [...this.cityList]
-      this.statusList = response[3].data.filter(x => x.lookupID == Status.Active || x.lookupID == Status.InActive);
+      this.statusList = response[3].data.filter(x => x.lookupID == Status.Active || x.lookupID == Status.InActive || x.lookupID == Status.Deleted);
       this.customerTypeList = response[4].data;
       this.getDataList();
     })
