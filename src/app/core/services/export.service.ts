@@ -24,12 +24,13 @@ export class ExportService {
       x?.customerCountry?.lookupNameEN?.lookupName,
       x?.customerCity?.lookupNameEN?.lookupName,
       x?.status?.lookupNameEN?.lookupName,
+      x?.customerLoggedIn ? 'Yes' : 'No',
     ]));
     let sections = [
       {
         heading: ['Customers'],
         data,
-        headers: ['ID', 'Full Name', 'National ID', 'Phone', 'Type', 'Business', 'Country', 'City', 'Status'],
+        headers: ['ID', 'Full Name', 'National ID', 'Phone', 'Type', 'Business', 'Country', 'City', 'Status', 'Logged In'],
       }
     ];
     this._excelService.exportToExcel(sections, 'Customers');
@@ -49,7 +50,7 @@ export class ExportService {
       x?.toCityID?.lookupNameEN?.lookupName,
       x?.toFullAddress,
       x?.enterUser[0]?.fullName,
-      `${this.dateFormate(x?.enterDate)} ${this.dateFormate(x?.time,'shortTime') }`,
+      `${this.dateFormate(x?.enterDate)} ${this.dateFormate(x?.time, 'shortTime')}`,
       x?.customerOrderStatus?.lookupNameEN?.lookupName,
       x?.customerOrderComments,
       x?.customerOrderDesc,
@@ -59,7 +60,7 @@ export class ExportService {
         heading: ['Customers Orders'],
         data,
         headers: ['ID', 'Customer Name', 'Customer Phone', 'Customer City', 'Customer Address', 'Category', 'Price', 'Fees', 'Company',
-          'Receiver Name', 'Receiver City','Receiver Address', 'Created By', 'Created Date', 'Status','Comments','Description'],
+          'Receiver Name', 'Receiver City', 'Receiver Address', 'Created By', 'Created Date', 'Status', 'Comments', 'Description'],
       }
     ];
     this._excelService.exportToExcel(sections, 'Customers_Orders');
