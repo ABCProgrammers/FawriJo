@@ -149,7 +149,6 @@
                 [page]="pageNo"
                 [total]="total"
                 [limit]="limit"
-                (sortUpdated)="onSortChange($event)"
                 (multiSelected)="handleMultiSelect($event)"
                 (pageUpdated)="onPageChange($event)">
     <!--Headers-->
@@ -172,7 +171,10 @@
                         [customClass]="''"
                         [customStyles]="{borderRadius:'50%',height:'40px', width:'40px'}">
         </app-shape-card>
-        {{row?.fullName}}
+        <div class="d-flex flex-column gap-1">
+          <span>{{row?.fullName}}</span>
+          <span>{{row?.customerPhone}}</span>
+        </div>
       </div>
     </ng-template>
     <ng-template tableDataColumn="business" let-row="row">
@@ -181,9 +183,14 @@
         <span>{{row?.companyName}}</span>
       </div>
     </ng-template>
+    <ng-template tableDataColumn="country" let-row="row">
+      <div class="d-flex flex-column gap-2">
+        <span>{{row?.customerCountry.lookupNameEN.lookupName}}</span>
+        <span>{{row?.customerCity.lookupNameEN.lookupName}}</span>
+      </div>
+    </ng-template>
     <ng-template tableDataColumn="loginStatus" let-row="row">
       <div class="d-flex flex-column gap-2">
-        <!--<span>Online: {{row?.customerOnline && 'Yes' || 'No'}}</span>-->
         <span>Logged In: {{row?.customerLoggedIn && 'Yes' || 'No'}}</span>
       </div>
     </ng-template>

@@ -31,7 +31,7 @@ export class CustomersComponent {
       Sort: 1,
       PageSize: this.limit,
     },
-    tableLayout: '.2fr .4fr 1.2fr .90fr .60fr .80fr .80fr .70fr 1fr .6fr 1fr',
+    tableLayout: '.2fr .4fr 1.2fr .60fr .80fr .70fr .50fr .70fr .70fr .6fr 1fr',
   };
   tableColumns: TableColumn[] = [];
 
@@ -282,47 +282,15 @@ export class CustomersComponent {
     this.pageNo = page;
     this.getDataList();
   }
-  onSortChange(sort: any) {
-    if (sort?.direction && sort?.column) {
-      switch (sort.column) {
-        case "lookupNameEN":
-          this.tableConfig.filter.Sort = sort.direction === "desc" ? 3 : 2;
-          break;
-        case "sort":
-          this.tableConfig.filter.Sort = sort.direction === "desc" ? 5 : 4;
-          break;
-        case "videos":
-          this.tableConfig.filter.Sort = sort.direction === "desc" ? 7 : 6;
-          break;
-        case "cards":
-          this.tableConfig.filter.Sort = sort.direction === "desc" ? 9 : 8;
-          break;
-        case "qbanks":
-          this.tableConfig.filter.Sort = sort.direction === "desc" ? 11 : 10;
-          break;
-        case "books":
-          this.tableConfig.filter.Sort = sort.direction === "desc" ? 13 : 12;
-          break;
-        case "status":
-          this.tableConfig.filter.Sort = sort.direction === "desc" ? 15 : 14;
-          break;
-        default:
-          break;
-      }
-    } else {
-      this.tableConfig.filter.Sort = 1;
-    }
-    this.getDataList();
-  }
   initTableColumns() {
     this.tableColumns = [
       { key: 'customerID', label: 'ID #' },
       { key: 'customerName', label: 'Full Name' },
-      { key: 'customerPhone', label: 'Phone' },
       { key: 'customerLevel.lookupNameEN.lookupName', label: 'Type' },
       { key: 'business', label: 'Business' },
-      { key: 'customerCountry.lookupNameEN.lookupName', label: 'Country' },
-      { key: 'customerCity.lookupNameEN.lookupName', label: 'City' },
+      { key: 'country', label: 'Country' },
+      { key: 'deliveredOrders', label: 'Delivered Orders' },
+      { key: 'activeWalletAmount', label: 'Current Wallet', currency: { decimalFormat:'2.3-3' } },
       { key: 'loginStatus', label: 'Login Status' },
       { key: 'status', label: 'Status' },
       { key: 'action', label: '' },

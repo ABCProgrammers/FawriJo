@@ -23,6 +23,8 @@ export class ExportService {
       x?.businessCategory?.lookupNameEN?.lookupName,
       x?.customerCountry?.lookupNameEN?.lookupName,
       x?.customerCity?.lookupNameEN?.lookupName,
+      x?.deliveredOrders,
+      this.currencyFormate(x?.activeWalletAmount),
       x?.status?.lookupNameEN?.lookupName,
       x?.customerLoggedIn ? 'Yes' : 'No',
     ]));
@@ -30,7 +32,7 @@ export class ExportService {
       {
         heading: ['Customers'],
         data,
-        headers: ['ID', 'Full Name', 'National ID', 'Phone', 'Type', 'Business', 'Country', 'City', 'Status', 'Logged In'],
+        headers: ['ID', 'Full Name', 'National ID', 'Phone', 'Type', 'Business', 'Country', 'City', 'Delivered Orders', 'Current Wallet', 'Status', 'Logged In'],
       }
     ];
     this._excelService.exportToExcel(sections, 'Customers');
